@@ -2,12 +2,13 @@
   <div class="Contract">
     <h2 class="MarginT_20 MarginB_20">合同（应付）</h2>
     <el-row class="MarginT_20">
-      <el-form ref="formContract" label-position="left" :model="formContract" label-width="80px" size="small" style="padding: 10px;">
+      <el-form ref="formContract" :rules="rules" label-position="left" :model="formContract" label-width="80px" size="small" style="padding: 10px;">
         <el-col :span="6">
-          <el-form-item label="合同日期">
+          <el-form-item label="合同日期" prop="contractDate">
             <el-date-picker prop="contractDate" style="width: 90%;float:left"
               v-model="formContract.contractDate"
               type="date"
+              value-format="yyyy-MM-dd"
               placeholder="选择日期">
             </el-date-picker>
           </el-form-item>
@@ -34,7 +35,7 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="6">
+        <!-- <el-col :span="6">
           <el-form-item label="付款条件" prop="payTerm">
             <el-select v-model="formContract.payTerm" placeholder="请选择" style="width: 90%;float:left">
               <el-option
@@ -45,7 +46,7 @@
               </el-option>
             </el-select>
           </el-form-item>
-        </el-col>
+        </el-col> -->
         <el-col :span="6">
           <el-form-item label="部门" prop="department">
             <el-select v-model="formContract.department" filterable remote :remote-method="changeDepartment" placeholder="请输入关键字" style="width: 90%;float:left">
@@ -103,7 +104,7 @@
               v-for="item in scope.row.productionCodeList"
               :key="item.fitemid"
               :label="item.fnumber"
-              :value="item.fnumber">
+              :value="item.fitemid">
             </el-option>
           </el-select>
         </template>
@@ -162,8 +163,11 @@
       </el-table-column>
     </el-table>
     <section class="MarginT_20">
-      <el-button icon="el-icon-plus" @click="addLine">新增一行</el-button>
-      <el-button icon="el-icon-plus" @click="save">保存</el-button>
+      <el-button icon="el-icon-plus" size="mini" @click="addLine">新增一行</el-button>
+    </section>
+    <section class="MarginT_20 MarginB_20">
+      <el-button type="info" size="mini" @click="back">返 回</el-button>
+      <el-button type="danger" size="mini" @click="save">保 存</el-button>
     </section>
     <!-- 导入Excel -->
     <!-- <el-upload
@@ -180,49 +184,50 @@
 </template>
 
 <script>
-// import { mapState, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 import $ from 'jquery'
+// import {formatToString} from '../util/utils'
 import XLSX from 'xlsx'
 export default {
   name: 'Contract',
   data () {
     return {
       formContract: {
-        constructionTeam: '',
-        department: '',
-        payTerm: '',
-        salesman: '',
         contractDate: '',
         contractName: '',
         contractNo: '',
-        productionCode: '',
-        curFnumber: null // 当前选择的产品代码项
+        constructionTeam: '',
+        department: '',
+        salesman: '',
+        projectCode: ''
       },
-      formAdd: {
-        list: [
-          {fnumber: '', fname: '', fmodel: '', pamount: '', pprice: '', psum: '', pnote: '', funit: '', productionCodeList: []}
+      rules: {
+        contractDate: [
+          { required: true, message: '请选择合同日期', trigger: 'change' }
         ]
+      },
+      curFItemID: null, // 当前选择的产品代码项
+      formAdd: {
+        list: []
       },
       constructionTeamList: [],
       departmentList: [],
       salesmanList: [],
-      projectList: [],
-      // productionCodeList: [],
-      payTermList: [
-        {
-          value: '付款条件1',
-          label: '付款条件1'
-        }
-      ]
+      projectList: []
     }
   },
   computed: {
-    // ...mapState({
-    // })
+    ...mapState({
+      contractId: state => state.contractId
+    })
   },
   created () {
+    this.getDetail()
   },
   methods: {
+    back () {
+      this.$router.push({name: 'ContractList'})
+    },
     addLine () {
       this.formAdd.list.push({fnumber: '', fname: '', fmodel: '', pamount: '', pprice: '', psum: '', pnote: '', funit: '', productionCodeList: []})
     },
@@ -240,7 +245,7 @@ export default {
         tmpData += '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> '
         tmpData += '<soap:Body> '
         tmpData += '<JA_LIST xmlns="http://tempuri.org/">'
-        tmpData += "<FSQL>select fitemid,fname from t_supplier where fname like '%" + val + "%' order by fnumber</FSQL>"
+        tmpData += "<FSQL>select top 50 fitemid,fname from t_supplier where fname like '%" + val + "%' order by fnumber</FSQL>"
         tmpData += '</JA_LIST>'
         tmpData += '</soap:Body>'
         tmpData += '</soap:Envelope>'
@@ -270,7 +275,7 @@ export default {
         tmpData += '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> '
         tmpData += '<soap:Body> '
         tmpData += '<JA_LIST xmlns="http://tempuri.org/">'
-        tmpData += "<FSQL>select fitemid,fname from t_department where fname like '%" + val + "%' order by fnumber</FSQL>"
+        tmpData += "<FSQL>select top 50 fitemid,fname from t_department where fname like '%" + val + "%' order by fnumber</FSQL>"
         tmpData += '</JA_LIST>'
         tmpData += '</soap:Body>'
         tmpData += '</soap:Envelope>'
@@ -300,7 +305,7 @@ export default {
         tmpData += '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> '
         tmpData += '<soap:Body> '
         tmpData += '<JA_LIST xmlns="http://tempuri.org/">'
-        tmpData += "<FSQL>select fitemid,fname from t_emp where fname like '%" + val + "%' order by fnumber</FSQL>"
+        tmpData += "<FSQL>select top 50 fitemid,fname from t_emp where fname like '%" + val + "%' order by fnumber</FSQL>"
         tmpData += '</JA_LIST>'
         tmpData += '</soap:Body>'
         tmpData += '</soap:Envelope>'
@@ -330,7 +335,7 @@ export default {
         tmpData += '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> '
         tmpData += '<soap:Body> '
         tmpData += '<JA_LIST xmlns="http://tempuri.org/">'
-        tmpData += "<FSQL>select fitemid,fname from t_Item where fitemclassid=3001 and fname like '%" + val + "%' order by fnumber</FSQL>"
+        tmpData += "<FSQL>select top 50 fitemid,fname from t_Item where fitemclassid=3001 and fname like '%" + val + "%' order by fnumber</FSQL>"
         tmpData += '</JA_LIST>'
         tmpData += '</soap:Body>'
         tmpData += '</soap:Envelope>'
@@ -360,7 +365,7 @@ export default {
         tmpData += '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> '
         tmpData += '<soap:Body> '
         tmpData += '<JA_LIST xmlns="http://tempuri.org/">'
-        tmpData += "<FSQL>select a.fitemid,a.fnumber,a.fname,a.fmodel,b.fname funit from t_icitem a inner join t_MeasureUnit b on a.funitid=b.fitemid  where a.fnumber like '%" + val + "%' order by a.fnumber</FSQL>"
+        tmpData += "<FSQL>select top 50 a.fitemid,a.fnumber,a.fname,a.fmodel,b.fname funit from t_icitem a inner join t_MeasureUnit b on a.funitid=b.fitemid  where a.fnumber like '%" + val + "%' order by a.fnumber</FSQL>"
         tmpData += '</JA_LIST>'
         tmpData += '</soap:Body>'
         tmpData += '</soap:Envelope>'
@@ -386,10 +391,10 @@ export default {
     },
     // 返回选中选项
     checkPCode (item) {
-      return item.fnumber === this.curFnumber
+      return item.fitemid === this.curFItemID
     },
     changePCode (val, idx) {
-      this.curFnumber = val
+      this.curFItemID = val
       let options = this.formAdd.list[idx].productionCodeList
       let resultItem = (options.filter(this.checkPCode))[0]
       this.formAdd.list[idx].fname = resultItem.fname
@@ -397,7 +402,123 @@ export default {
       this.formAdd.list[idx].funit = resultItem.funit
     },
     save () {
-      console.log(this.formAdd.list)
+      // 为空校验
+      let botData = {'items': []}
+      let listData = this.formAdd.list
+      for (let i = 0; i < listData.length; i++) {
+        if (!listData[i].fnumber || !listData[i].pamount || !listData[i].pprice || !listData[i].psum) {
+          this.$message({
+            message: '请将信息填写完整!',
+            type: 'warning'
+          })
+          return false
+        } else {
+          botData.items.push({
+            'FItemID': listData[i].fnumber,
+            'FQty': listData[i].pamount,
+            'FPrice': listData[i].pprice,
+            'FAmount': listData[i].psum,
+            'FNote': listData[i].pnote
+          })
+        }
+      }
+      let topData = {
+        'items': [{
+          'FDate': this.formContract.contractDate,
+          'FExplanation': this.formContract.contractName ? this.formContract.contractName : 0,
+          'FSupplyID': this.formContract.constructionTeam ? this.formContract.constructionTeam : 0,
+          'FDeptID': this.formContract.department ? this.formContract.department : 0,
+          'FEmpID': this.formContract.salesman ? this.formContract.salesman : 0,
+          'FProjectID': this.formContract.projectCode ? this.formContract.projectCode : 0
+        }]
+      }
+      console.log(topData, listData)
+      var tmpData = '<?xml version="1.0" encoding="utf-8"?>'
+      tmpData += '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> '
+      tmpData += '<soap:Body> '
+      tmpData += '<PayContract xmlns="http://tempuri.org/">'
+      tmpData += '<FJSONBtou>' + JSON.stringify(topData) + '</FJSONBtou>'
+      tmpData += '<FJSONBti>' + JSON.stringify(botData) + '</FJSONBti>'
+      tmpData += '<ID>' + this.contractId + '</ID>'
+      tmpData += '</PayContract>'
+      tmpData += '</soap:Body>'
+      tmpData += '</soap:Envelope>'
+      this.Http.post('PayContract', tmpData
+      ).then(res => {
+        let xml = res.data
+        let parser = new DOMParser()
+        let xmlDoc = parser.parseFromString(xml, 'text/xml')
+        // 提取数据
+        let Result = xmlDoc.getElementsByTagName('PayContractResponse')[0].getElementsByTagName('PayContractResult')[0]
+        let HtmlStr = $(Result).html()
+        let Info = (JSON.parse(HtmlStr))[0]
+        if (Info.code === '1') {
+          this.$message({
+            message: '保存成功!',
+            type: 'success'
+          })
+        } else {
+          this.$message({
+            message: '保存失败!',
+            type: 'error'
+          })
+        }
+      }).catch((error) => {
+        console.log(error)
+      })
+    },
+    getDetail () {
+      var tmpData = '<?xml version="1.0" encoding="utf-8"?>'
+      tmpData += '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> '
+      tmpData += '<soap:Body> '
+      tmpData += '<JA_LIST xmlns="http://tempuri.org/">'
+      tmpData += '<FSQL><![CDATA[select * from ZZ_PayList where FInterID=' + this.contractId + ']]></FSQL>'
+      tmpData += '</JA_LIST>'
+      tmpData += '</soap:Body>'
+      tmpData += '</soap:Envelope>'
+
+      this.Http.post('JA_LIST', tmpData
+      ).then(res => {
+        let xml = res.data
+        let parser = new DOMParser()
+        let xmlDoc = parser.parseFromString(xml, 'text/xml')
+        // 提取数据
+        let Result = xmlDoc.getElementsByTagName('JA_LISTResponse')[0].getElementsByTagName('JA_LISTResult')[0]
+        let HtmlStr = $(Result).html()
+        let Info = JSON.parse(HtmlStr)
+        console.log(Info)
+        if (Info.length > 0) {
+          this.formContract = {
+            contractDate: Info[0]['合同日期'],
+            contractName: Info[0]['合同名称'],
+            contractNo: Info[0]['合同号'],
+            constructionTeam: Info[0].FSupplyID,
+            department: Info[0].FDeptID,
+            salesman: Info[0].FEmpID,
+            projectCode: Info[0].FProjectID
+          }
+          this.changeTeam(Info[0]['施工队'])
+          this.changeDepartment(Info[0]['部门'])
+          this.changeSalesman(Info[0]['业务员'])
+          this.changeProject(Info[0]['项目编号'])
+          Info.map((item, idx) => {
+            this.formAdd.list.push({
+              fnumber: item.FItemID,
+              fname: item['产品名称'],
+              fmodel: item['规格型号'],
+              pamount: item['数量'],
+              pprice: item['含税单价'],
+              psum: item['价税合计'],
+              pnote: item['备注'],
+              funit: item['单位'],
+              productionCodeList: []
+            })
+            this.filterMethodPCode(item['产品代码'], idx)
+          })
+        }
+      }).catch((error) => {
+        console.log(error)
+      })
     },
     readExcel1 (files) { // 表格导入
       // var that = this

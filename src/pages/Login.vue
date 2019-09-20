@@ -105,7 +105,7 @@ export default {
             let cookieStr = CryptoJS.HmacSHA256((this.Form.accountName + this.Form.accountPsd).toString(), '14a808c40bba58c2c')
             setCookie('ZTC_14a808c40bba58c2c', cookieStr, 6)
             this.updateUserInfo({fempid: Info.fempid})
-            this.$router.push({name: 'Contract'})
+            this.$router.push({name: 'ContractList'})
             this.btLoading = false
             break
           default:

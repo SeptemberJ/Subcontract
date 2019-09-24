@@ -3,85 +3,76 @@
     <h2 class="MarginT_20 MarginB_20">合同（应付）</h2>
     <el-row class="MarginT_20">
       <el-form ref="formContract" :rules="rules" label-position="left" :model="formContract" label-width="80px" size="small" style="padding: 10px;">
-        <el-col :span="6">
-          <el-form-item label="合同日期" prop="contractDate">
-            <el-date-picker prop="contractDate" style="width: 90%;float:left"
-              v-model="formContract.contractDate"
-              type="date"
-              value-format="yyyy-MM-dd"
-              placeholder="选择日期">
-            </el-date-picker>
-          </el-form-item>
+        <el-col :span="24">
+          <el-row>
+            <el-col :span="6">
+              <el-form-item label="合同日期" prop="contractDate">
+                <el-date-picker prop="contractDate" style="width: 90%;float:left"
+                  v-model="formContract.contractDate"
+                  type="date"
+                  value-format="yyyy-MM-dd"
+                  placeholder="选择日期">
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="合同名称" prop="contractName">
+                <el-input v-model="formContract.contractName" clearable placeholder="请输入合同名称" style="width: 90%;float:left"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="施工队" prop="constructionTeam">
+                <el-select v-model="formContract.constructionTeam" filterable remote :remote-method="changeTeam" placeholder="请输入关键字" style="width: 90%;float:left">
+                  <el-option
+                    v-for="item in constructionTeamList"
+                    :key="item.fitemid"
+                    :label="item.fname"
+                    :value="item.fitemid">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="部门" prop="department">
+                <el-select v-model="formContract.department" filterable remote :remote-method="changeDepartment" placeholder="请输入关键字" style="width: 100%;float:left">
+                  <el-option
+                    v-for="item in departmentList"
+                    :key="item.fitemid"
+                    :label="item.fname"
+                    :value="item.fitemid">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
         </el-col>
-        <el-col :span="6">
-          <el-form-item label="合同名称" prop="contractName">
-            <el-input v-model="formContract.contractName" clearable style="width: 90%;float:left"></el-input>
-          </el-form-item>
-        </el-col>
-        <!-- <el-col :span="6">
-          <el-form-item label="合同号" prop="contractNo">
-            <el-input v-model="formContract.contractNo" clearable style="width: 90%;float:left"></el-input>
-          </el-form-item>
-        </el-col> -->
-        <el-col :span="6">
-          <el-form-item label="施工队" prop="constructionTeam">
-            <el-select v-model="formContract.constructionTeam" filterable remote :remote-method="changeTeam" placeholder="请输入关键字" style="width: 90%;float:left">
-              <el-option
-                v-for="item in constructionTeamList"
-                :key="item.fitemid"
-                :label="item.fname"
-                :value="item.fitemid">
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <!-- <el-col :span="6">
-          <el-form-item label="付款条件" prop="payTerm">
-            <el-select v-model="formContract.payTerm" placeholder="请选择" style="width: 90%;float:left">
-              <el-option
-                v-for="item in payTermList"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col> -->
-        <el-col :span="6">
-          <el-form-item label="部门" prop="department">
-            <el-select v-model="formContract.department" filterable remote :remote-method="changeDepartment" placeholder="请输入关键字" style="width: 100%;float:left">
-              <el-option
-                v-for="item in departmentList"
-                :key="item.fitemid"
-                :label="item.fname"
-                :value="item.fitemid">
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="业务员" prop="salesman">
-            <el-select v-model="formContract.salesman" filterable remote :remote-method="changeSalesman" placeholder="请输入关键字" style="width: 90%;float:left">
-              <el-option
-                v-for="item in salesmanList"
-                :key="item.fitemid"
-                :label="item.fname"
-                :value="item.fitemid">
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="6">
-          <el-form-item label="项目编号" prop="productionCode">
-            <el-select v-model="formContract.projectCode" filterable remote :remote-method="changeProject" placeholder="请输入关键字" style="width: 100%;float:left">
-              <el-option
-                v-for="item in projectList"
-                :key="item.fitemid"
-                :label="item.fname"
-                :value="item.fitemid">
-              </el-option>
-            </el-select>
-          </el-form-item>
+        <el-col :span="24">
+          <el-row>
+            <el-col :span="6">
+              <el-form-item label="业务员" prop="salesman">
+                <el-select v-model="formContract.salesman" filterable remote :remote-method="changeSalesman" placeholder="请输入关键字" style="width: 90%;float:left">
+                  <el-option
+                    v-for="item in salesmanList"
+                    :key="item.fitemid"
+                    :label="item.fname"
+                    :value="item.fitemid">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="项目编号" prop="productionCode">
+                <el-select v-model="formContract.projectCode" filterable remote :remote-method="changeProject" placeholder="请输入关键字" style="width: 90%;float:left">
+                  <el-option
+                    v-for="item in projectList"
+                    :key="item.fitemid"
+                    :label="item.fname"
+                    :value="item.fitemid">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
         </el-col>
       </el-form>
     </el-row>
@@ -97,7 +88,7 @@
       </el-table-column>
       <el-table-column
         label="产品代码"
-        width="120">
+        width="170">
         <template slot-scope="scope">
           <el-select v-model="scope.row.fnumber" filterable remote :filter-method="(value) => filterMethodPCode(value, scope.$index)" @change="(value) => changePCode(value, scope.$index)" size="mini" placeholder="请输入关键字" style="width: 95%;margin: 0 auto;">
             <el-option
@@ -123,22 +114,21 @@
         label="数量"
         width="120">
         <template slot-scope="scope">
-          <el-input v-model="scope.row.pamount" size="mini" clearable></el-input>
+          <el-input v-model="scope.row.pamount" @change="calculate(scope.$index)" size="mini" clearable></el-input>
         </template>
       </el-table-column>
       <el-table-column
         label="含税单价"
         width="120">
         <template slot-scope="scope">
-          <el-input v-model="scope.row.pprice" size="mini" clearable></el-input>
+          <el-input v-model="scope.row.pprice" @change="calculate(scope.$index)" size="mini" clearable></el-input>
         </template>
       </el-table-column>
       <el-table-column
-        property="psum"
         label="价税合计"
         width="120">
         <template slot-scope="scope">
-          <el-input v-model="scope.row.psum" size="mini" clearable></el-input>
+          <el-input v-model="scope.row.psum" size="mini" disabled clearable></el-input>
         </template>
       </el-table-column>
       <el-table-column
@@ -165,9 +155,97 @@
     <section class="MarginT_20">
       <el-button icon="el-icon-plus" size="mini" @click="addLine">新增一行</el-button>
     </section>
+    <!-- 付款比列 -->
+    <section class="MarginT_20 MarginB_20">
+      <p class="TextAlignL ModuleTit">付款比列{{azfee}}---{{psumTotal}}</p>
+      <el-row class="TextAlignL MarginB_10" style="font-size: 14px;padding:0 5px 5px 20px;">
+        <el-col :span="20">
+          <el-row style="margin-bottom: 10px; font-weight: bold;">
+            <el-col :span="3">项目</el-col>
+            <el-col :span="4">实际比例(%)</el-col>
+            <el-col :span="4">应付金额</el-col>
+            <el-col :span="4">实际金额</el-col>
+            <el-col :span="4">未付金额</el-col>
+            <el-col :span="5">付款时间</el-col>
+          </el-row>
+        </el-col>
+        <el-col :span="4">
+          <el-row style="margin-bottom: 10px; font-weight: bold;">
+            <el-col>付款条件</el-col>
+          </el-row>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="20">
+          <el-row class="TextAlignL" style="font-size: 14px;padding:0 5px 5px 20px;">
+            <el-col :span="3">1. 进场后</el-col>
+            <el-col :span="4"><el-input v-model="jch.sjbl" size="mini" style="width: 85%;"></el-input></el-col>
+            <el-col :span="4" style="padding-top: 6px;">{{jch.yfje}}</el-col>
+            <el-col :span="4"><el-input v-model="jch.sjje" size="mini" style="width: 85%;"></el-input></el-col>
+            <el-col :span="4" style="padding-top: 6px;">{{jch.yfje - jch.sjje}}</el-col>
+            <el-col :span="5">
+              <el-date-picker style="width: 65%;" size="mini"
+                v-model="jch.fdate"
+                type="date"
+                value-format="yyyy-MM-dd"
+                placeholder="选择日期">
+              </el-date-picker>
+            </el-col>
+          </el-row>
+          <el-row class="TextAlignL" style="font-size: 14px;padding:0 5px 5px 20px;">
+            <el-col :span="3">2. 隐蔽验收</el-col>
+            <el-col :span="4"><el-input v-model="ybys.sjbl" size="mini" style="width: 85%;"></el-input></el-col>
+            <el-col :span="4" style="padding-top: 6px;">{{ybys.yfje}}</el-col>
+            <el-col :span="4"><el-input v-model="ybys.sjje" size="mini" style="width: 85%;"></el-input></el-col>
+            <el-col :span="4" style="padding-top: 6px;">{{ybys.yfje - ybys.sjje}}</el-col>
+            <el-col :span="5">
+              <el-date-picker style="width: 65%;" size="mini"
+                v-model="ybys.fdate"
+                type="date"
+                value-format="yyyy-MM-dd"
+                placeholder="选择日期">
+              </el-date-picker>
+            </el-col>
+          </el-row>
+          <el-row class="TextAlignL" style="font-size: 14px;padding:0 5px 5px 20px;">
+            <el-col :span="3">3. 竣工验收</el-col>
+            <el-col :span="4"><el-input v-model="jgys.sjbl" size="mini" style="width: 85%;"></el-input></el-col>
+            <el-col :span="4" style="padding-top: 6px;">{{jgys.yfje}}</el-col>
+            <el-col :span="4"><el-input v-model="jgys.sjje" size="mini" style="width: 85%;"></el-input></el-col>
+            <el-col :span="4" style="padding-top: 6px;">{{jgys.yfje - jgys.sjje}}</el-col>
+            <el-col :span="5">
+              <el-date-picker style="width: 65%;" size="mini"
+                v-model="jgys.fdate"
+                type="date"
+                value-format="yyyy-MM-dd"
+                placeholder="选择日期">
+              </el-date-picker>
+            </el-col>
+          </el-row>
+          <el-row class="TextAlignL" style="font-size: 14px;padding:0 5px 5px 20px;">
+            <el-col :span="3">4. 质保期</el-col>
+            <el-col :span="4"><el-input v-model="zbq.sjbl" size="mini" style="width: 85%;"></el-input></el-col>
+            <el-col :span="4" style="padding-top: 6px;">{{zbq.yfje}}</el-col>
+            <el-col :span="4"><el-input v-model="zbq.sjje" size="mini" style="width: 85%;"></el-input></el-col>
+            <el-col :span="4" style="padding-top: 6px;">{{zbq.yfje - zbq.sjje}}</el-col>
+            <el-col :span="5">
+              <el-date-picker style="width: 65%;" size="mini"
+                v-model="zbq.fdate"
+                type="date"
+                value-format="yyyy-MM-dd"
+                placeholder="选择日期">
+              </el-date-picker>
+            </el-col>
+          </el-row>
+        </el-col>
+        <el-col :span="4">
+          <el-input type="textarea" :rows="5" placeholder="请输入付款条件" v-model="fkNote" style="width:95%;"></el-input>
+        </el-col>
+      </el-row>
+    </section>
     <section class="MarginT_20 MarginB_20">
       <el-button type="info" size="mini" @click="back">返 回</el-button>
-      <el-button type="danger" size="mini" @click="save">保 存</el-button>
+      <el-button type="danger" size="mini" :loading="btLoading" @click="save">保 存</el-button>
     </section>
     <!-- 导入Excel -->
     <!-- <el-upload
@@ -192,6 +270,7 @@ export default {
   name: 'Contract',
   data () {
     return {
+      btLoading: false,
       formContract: {
         contractDate: '',
         contractName: '',
@@ -216,13 +295,42 @@ export default {
       constructionTeamList: [],
       departmentList: [],
       salesmanList: [],
-      projectList: []
+      projectList: [],
       // productionCodeList: [],
+      jch: {sjbl: 0, yfje: 0, sjje: 0, fdate: ''},
+      ybys: {sjbl: 0, yfje: 0, sjje: 0, fdate: ''},
+      jgys: {sjbl: 0, yfje: 0, sjje: 0, fdate: ''},
+      zbq: {sjbl: 0, yfje: 0, sjje: 0, fdate: ''},
+      fkNote: '',
+      azfee: 0, // 安装费
+      psumTotal: 0 // 价税合计总额
     }
   },
   computed: {
     // ...mapState({
     // })
+  },
+  watch: {
+    psumTotal: function (newVal) {
+      this.jgys.yfje = newVal * (this.jgys.sjbl / 100)
+      this.zbq.yfje = newVal * (this.zbq.sjbl / 100)
+    },
+    azfee: function (newVal) {
+      this.jch.yfje = newVal * (this.jch.sjbl / 100)
+      this.ybys.yfje = newVal * (this.ybys.sjbl / 100)
+    },
+    'jch.sjbl': function (newVal) {
+      this.jch.yfje = this.azfee * (newVal / 100)
+    },
+    'ybys.sjbl': function (newVal) {
+      this.ybys.yfje = this.azfee * (newVal / 100)
+    },
+    'jgys.sjbl': function (newVal) {
+      this.jgys.yfje = this.psumTotal * (newVal / 100)
+    },
+    'zbq.sjbl': function (newVal) {
+      this.zbq.yfje = this.psumTotal * (newVal / 100)
+    }
   },
   created () {
     this.formContract.contractDate = formatToString(new Date(), 'Simple', '-')
@@ -236,10 +344,38 @@ export default {
     },
     remove (idx) {
       this.formAdd.list.splice(idx, 1)
+      this.updateFee()
     },
     changeFile (file, fileList) {
       let files = {0: file.raw}
       this.readExcel1(files)
+    },
+    // 计算总价格
+    calculate (idx) {
+      let LineItem = this.formAdd.list[idx]
+      if (LineItem.pprice && LineItem.pamount) {
+        this.formAdd.list[idx].psum = LineItem.pprice * LineItem.pamount
+      } else {
+        this.formAdd.list[idx].psum = 0
+      }
+      this.updateFee()
+    },
+    updateFee () {
+      let hasZA = false
+      let sum = 0
+      this.formAdd.list.map((item, idx) => {
+        sum += item.psum
+        if (item.fnumber === 3022) {
+          hasZA = true
+          this.azfee = item.psum
+        }
+        if (idx === this.formAdd.list.length - 1) {
+          this.psumTotal = sum
+          if (!hasZA) {
+            this.azfee = 0
+          }
+        }
+      })
     },
     // 获取下拉
     changeTeam (val) {
@@ -416,7 +552,7 @@ export default {
         return false
       }
       for (let i = 0; i < listData.length; i++) {
-        if (!listData[i].fnumber || !listData[i].pamount || !listData[i].pprice || !listData[i].psum) {
+        if (!listData[i].fnumber || listData[i].psum === 0 || listData[i].psum === '') {
           this.$message({
             message: '请将信息填写完整!',
             type: 'warning'
@@ -432,6 +568,7 @@ export default {
           })
         }
       }
+      this.btLoading = true
       let topData = {
         'items': [{
           'FDate': this.formContract.contractDate,
@@ -442,12 +579,47 @@ export default {
           'FProjectID': this.formContract.projectCode ? this.formContract.projectCode : 0
         }]
       }
+      let fkData = {'items': [
+        {
+          'fper': this.jch.sjbl + '%',
+          'fname': '进场后',
+          'famount': this.jch.yfje,
+          'fdecimal': this.jch.sjje,
+          'fdate': this.jch.fdate,
+          'fnote': this.fkNote
+        },
+        {
+          'fper': this.ybys.sjbl + '%',
+          'fname': '隐蔽验收',
+          'famount': this.ybys.yfje,
+          'fdecimal': this.ybys.sjje,
+          'fdate': this.ybys.fdate,
+          'fnote': this.fkNote
+        },
+        {
+          'fper': this.jgys.sjbl + '%',
+          'fname': '竣工验收',
+          'famount': this.jgys.yfje,
+          'fdecimal': this.jgys.sjje,
+          'fdate': this.jgys.fdate,
+          'fnote': this.fkNote
+        },
+        {
+          'fper': this.zbq.sjbl + '%',
+          'fname': '质保期',
+          'famount': this.zbq.yfje,
+          'fdecimal': this.zbq.sjje,
+          'fdate': this.zbq.fdate,
+          'fnote': this.fkNote
+        }
+      ]}
       var tmpData = '<?xml version="1.0" encoding="utf-8"?>'
       tmpData += '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> '
       tmpData += '<soap:Body> '
       tmpData += '<PayContract xmlns="http://tempuri.org/">'
       tmpData += '<FJSONBtou>' + JSON.stringify(topData) + '</FJSONBtou>'
       tmpData += '<FJSONBti>' + JSON.stringify(botData) + '</FJSONBti>'
+      tmpData += '<FJSONPer>' + JSON.stringify(fkData) + '</FJSONPer>'
       tmpData += '<ID>0</ID>'
       tmpData += '</PayContract>'
       tmpData += '</soap:Body>'
@@ -466,28 +638,31 @@ export default {
             message: '新增成功!',
             type: 'success'
           })
+          this.btLoading = false
           // 初始化界面
-          this.formContract = {
-            contractDate: '',
-            contractName: '',
-            constructionTeam: '',
-            department: '',
-            salesman: '',
-            projectCode: ''
-          }
-          this.formAdd = {
-            list: [
-              {fnumber: '', fname: '', fmodel: '', pamount: '', pprice: '', psum: '', pnote: '', funit: '', productionCodeList: []}
-            ]
-          }
+          // this.formContract = {
+          //   contractDate: '',
+          //   contractName: '',
+          //   constructionTeam: '',
+          //   department: '',
+          //   salesman: '',
+          //   projectCode: ''
+          // }
+          // this.formAdd = {
+          //   list: [
+          //     {fnumber: '', fname: '', fmodel: '', pamount: '', pprice: '', psum: '', pnote: '', funit: '', productionCodeList: []}
+          //   ]
+          // }
         } else {
           this.$message({
             message: '新增失败!',
             type: 'error'
           })
+          this.btLoading = false
         }
       }).catch((error) => {
         console.log(error)
+        this.btLoading = false
       })
     },
     readExcel1 (files) { // 表格导入
@@ -556,5 +731,16 @@ export default {
         font-size: 14px;
       }
     }
+  }
+  .ModuleTit{
+    height: 42px;
+    background: #ddd;
+    padding-left: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    line-height: 42px;
+    font-weight: bold;
+    margin-bottom: 10px;
   }
 </style>

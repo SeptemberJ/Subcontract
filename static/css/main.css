@@ -54,11 +54,19 @@ body{
 }
 .DisabledNormal .el-input.is-disabled .el-input__inner {
   background-color: #fff !important;
-  color: #000 !important;
+  color: #606266 !important;
 }
 span .el-input.is-disabled .el-input__inner {
   background-color: #fff !important;
-  color: #000 !important;
+  color: #606266 !important;
+}
+table .el-input.is-disabled .el-input__inner {
+  background-color: #fff !important;
+  color: #606266 !important;
+}
+.formContract .el-input.is-disabled .el-input__inner {
+  background-color: #fff !important;
+  color: #606266 !important;
 }
 .el-textarea.is-disabled .el-textarea__inner {
   background-color: #fff !important;

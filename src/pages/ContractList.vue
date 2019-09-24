@@ -19,6 +19,7 @@
       style="width: 100%">
       <el-table-column
         type="index"
+        fixed
         width="50">
       </el-table-column>
       <el-table-column
@@ -30,13 +31,6 @@
       <el-table-column
         prop="合同名称"
         label="合同名称"
-        width="180"
-        show-overflow-tooltip>
-      </el-table-column>
-      <el-table-column
-        prop="合同名称"
-        label="合同名称"
-        width="180"
         show-overflow-tooltip>
       </el-table-column>
       <el-table-column
@@ -48,27 +42,26 @@
       <el-table-column
         prop="项目编号"
         label="项目编号"
-        width="150"
         show-overflow-tooltip>
       </el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         prop="产品代码"
         label="产品代码"
         width="150"
         show-overflow-tooltip>
-      </el-table-column>
-      <el-table-column
+      </el-table-column> -->
+      <!-- <el-table-column
         prop="产品名称"
         label="产品名称"
         width="150"
         show-overflow-tooltip>
-      </el-table-column>
-      <el-table-column
+      </el-table-column> -->
+      <!-- <el-table-column
         prop="含税单价"
         label="含税单价"
         width="100"
         show-overflow-tooltip>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         prop="数量"
         label="数量"
@@ -81,41 +74,47 @@
         width="100"
         show-overflow-tooltip>
       </el-table-column>
-      <el-table-column
+      <!-- <el-table-column
         prop="单位"
         label="单位"
         width="80"
         show-overflow-tooltip>
-      </el-table-column>
-      <el-table-column
+      </el-table-column> -->
+      <!-- <el-table-column
         prop="规格型号"
         label="规格型号"
         width="150"
         show-overflow-tooltip>
-      </el-table-column>
-      <el-table-column
+      </el-table-column> -->
+      <!-- <el-table-column
         prop="备注"
         label="备注"
         width="150"
         show-overflow-tooltip>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         prop="业务员"
         label="业务员"
-        width="100"
+        width="120"
         show-overflow-tooltip>
       </el-table-column>
       <el-table-column
         prop="施工队"
         label="施工队"
-        width="150"
         show-overflow-tooltip>
       </el-table-column>
       <el-table-column
         prop="部门"
         label="部门"
-        width="150"
         show-overflow-tooltip>
+      </el-table-column>
+      <el-table-column
+        fixed="right"
+        label="操作"
+        width="80">
+        <template slot-scope="scope">
+          <el-button type="danger" size="mini" @click="del(scope.row.FInterID)">删 除</el-button>
+        </template>
       </el-table-column>
     </el-table>
     <el-pagination v-if="tableData.length > 0" style="margin: 10px 0;"
@@ -166,6 +165,48 @@ export default {
       this.updateContractId(row.FInterID)
       this.$router.push({name: 'ContractDetail'})
     },
+    del (FInterID) {
+      this.$confirm('此操作将该单据, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        var tmpData = '<?xml version="1.0" encoding="utf-8"?>'
+        tmpData += '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> '
+        tmpData += '<soap:Body> '
+        tmpData += '<PayContract_DEL xmlns="http://tempuri.org/">'
+        tmpData += '<ID>' + FInterID + '</ID>'
+        tmpData += '</PayContract_DEL>'
+        tmpData += '</soap:Body>'
+        tmpData += '</soap:Envelope>'
+
+        this.Http.post('PayContract_DEL', tmpData
+        ).then(res => {
+          let xml = res.data
+          let parser = new DOMParser()
+          let xmlDoc = parser.parseFromString(xml, 'text/xml')
+          // 提取数据
+          let Result = xmlDoc.getElementsByTagName('PayContract_DELResponse')[0].getElementsByTagName('PayContract_DELResult')[0]
+          let HtmlStr = $(Result).html()
+          let Info = (JSON.parse(HtmlStr))[0]
+          if (Info.code === '1') {
+            this.$message({
+              message: '删除成功!',
+              type: 'success'
+            })
+            this.getData()
+          } else {
+            this.$message({
+              message: '删除失败!',
+              type: 'error'
+            })
+          }
+        }).catch((error) => {
+          console.log(error)
+        })
+      }).catch(() => {
+      })
+    },
     getData () {
       var tmpData = '<?xml version="1.0" encoding="utf-8"?>'
       tmpData += '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> '
@@ -186,7 +227,10 @@ export default {
         let HtmlStr = $(Result).html()
         let Info = JSON.parse(HtmlStr)
         console.log(Info)
-        this.tableData = Info
+        this.tableData = Info.map(item => {
+          item['合同名称'] = item['合同名称'] === '0' ? '' : item['合同名称']
+          return item
+        })
         this.sum = Info[0].fcount
       }).catch((error) => {
         console.log(error)

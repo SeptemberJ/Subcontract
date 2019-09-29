@@ -22,14 +22,15 @@
             </el-col>
             <el-col :span="6">
               <el-form-item label="施工队" prop="constructionTeam">
-                <el-select v-model="formContract.constructionTeam" filterable remote :remote-method="changeTeam" placeholder="请输入关键字" style="width: 90%;float:left">
+                <el-input v-model="formContract.constructionTeam" clearable placeholder="请输入施工队" style="width: 90%;float:left"></el-input>
+                <!-- <el-select v-model="formContract.constructionTeam" filterable remote :remote-method="changeTeam" placeholder="请输入关键字" style="width: 90%;float:left">
                   <el-option
                     v-for="item in constructionTeamList"
                     :key="item.fitemid"
                     :label="item.fname"
                     :value="item.fitemid">
                   </el-option>
-                </el-select>
+                </el-select> -->
               </el-form-item>
             </el-col>
             <el-col :span="6">
@@ -72,6 +73,23 @@
                 </el-select>
               </el-form-item>
             </el-col>
+            <el-col :span="6">
+              <el-form-item label="公司名称" prop="companyName">
+                <el-input v-model="formContract.companyName" clearable placeholder="请输入公司名称" style="width: 90%;float:left"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="所属公司" prop="affiliatedCompany">
+                <el-select v-model="formContract.affiliatedCompany" placeholder="请选择所属公司" style="width: 90%;float:left">
+                  <el-option
+                    v-for="item in affiliatedCompanyList"
+                    :key="item.fitemid"
+                    :label="item.fname"
+                    :value="item.fitemid">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
           </el-row>
         </el-col>
       </el-form>
@@ -79,6 +97,8 @@
     <!-- list -->
     <el-table
       ref="singleTable"
+      :summary-method="getSummaries"
+      show-summary
       :data="formAdd.list"
       style="width: 100%">
       <el-table-column
@@ -87,22 +107,25 @@
         width="50">
       </el-table-column>
       <el-table-column
-        label="产品代码"
+        label="产品名称"
         width="170">
         <template slot-scope="scope">
-          <el-select v-model="scope.row.fnumber" filterable remote :filter-method="(value) => filterMethodPCode(value, scope.$index)" @change="(value) => changePCode(value, scope.$index)" size="mini" placeholder="请输入关键字" style="width: 95%;margin: 0 auto;">
+          <el-select v-model="scope.row.fitemid" filterable remote :filter-method="(value) => filterMethodPCode(value, scope.$index)" @change="(value) => changePCode(value, scope.$index)" size="mini" placeholder="请输入关键字" style="width: 95%;margin: 0 auto;">
             <el-option
               v-for="item in scope.row.productionCodeList"
               :key="item.fitemid"
-              :label="item.fnumber"
+              :label="item.fname"
               :value="item.fitemid">
+              <span style="float: left">{{ item.fname }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.fnumber }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px;margin-right: 15px;">{{ item.fmodel }}</span>
             </el-option>
           </el-select>
         </template>
       </el-table-column>
       <el-table-column
-        property="fname"
-        label="产品名称"
+        property="fnumber"
+        label="产品代码"
         show-overflow-tooltip>
       </el-table-column>
       <el-table-column
@@ -157,7 +180,7 @@
     </section>
     <!-- 付款比列 -->
     <section class="MarginT_20 MarginB_20">
-      <p class="TextAlignL ModuleTit">付款比列{{azfee}}---{{psumTotal}}</p>
+      <p class="TextAlignL ModuleTit">付款比列</p>
       <el-row class="TextAlignL MarginB_10" style="font-size: 14px;padding:0 5px 5px 20px;">
         <el-col :span="20">
           <el-row style="margin-bottom: 10px; font-weight: bold;">
@@ -245,7 +268,7 @@
     </section>
     <section class="MarginT_20 MarginB_20">
       <el-button type="info" size="mini" @click="back">返 回</el-button>
-      <el-button type="danger" size="mini" :loading="btLoading" @click="save">保 存</el-button>
+      <el-button type="danger" size="mini" :loading="btLoading" @click="save">新 增</el-button>
     </section>
     <!-- 导入Excel -->
     <!-- <el-upload
@@ -262,7 +285,7 @@
 </template>
 
 <script>
-// import { mapState, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 import $ from 'jquery'
 import {formatToString} from '../util/utils'
 import XLSX from 'xlsx'
@@ -279,7 +302,9 @@ export default {
         // payTerm: '',
         salesman: '',
         // contractNo: '',
-        projectCode: ''
+        projectCode: '',
+        companyName: '',
+        affiliatedCompany: ''
       },
       rules: {
         contractDate: [
@@ -296,6 +321,7 @@ export default {
       departmentList: [],
       salesmanList: [],
       projectList: [],
+      affiliatedCompanyList: [],
       // productionCodeList: [],
       jch: {sjbl: 0, yfje: 0, sjje: 0, fdate: ''},
       ybys: {sjbl: 0, yfje: 0, sjje: 0, fdate: ''},
@@ -312,30 +338,34 @@ export default {
   },
   watch: {
     psumTotal: function (newVal) {
-      this.jgys.yfje = newVal * (this.jgys.sjbl / 100)
-      this.zbq.yfje = newVal * (this.zbq.sjbl / 100)
+      this.jgys.yfje = (newVal * (this.jgys.sjbl / 100)).toFixed(2)
+      this.zbq.yfje = (newVal * (this.zbq.sjbl / 100)).toFixed(2)
     },
     azfee: function (newVal) {
-      this.jch.yfje = newVal * (this.jch.sjbl / 100)
-      this.ybys.yfje = newVal * (this.ybys.sjbl / 100)
+      this.jch.yfje = (newVal * (this.jch.sjbl / 100)).toFixed(2)
+      this.ybys.yfje = (newVal * (this.ybys.sjbl / 100)).toFixed(2)
     },
     'jch.sjbl': function (newVal) {
-      this.jch.yfje = this.azfee * (newVal / 100)
+      this.jch.yfje = (this.azfee * (newVal / 100)).toFixed(2)
     },
     'ybys.sjbl': function (newVal) {
-      this.ybys.yfje = this.azfee * (newVal / 100)
+      this.ybys.yfje = (this.azfee * (newVal / 100)).toFixed(2)
     },
     'jgys.sjbl': function (newVal) {
-      this.jgys.yfje = this.psumTotal * (newVal / 100)
+      this.jgys.yfje = (this.psumTotal * (newVal / 100)).toFixed(2)
     },
     'zbq.sjbl': function (newVal) {
-      this.zbq.yfje = this.psumTotal * (newVal / 100)
+      this.zbq.yfje = (this.psumTotal * (newVal / 100)).toFixed(2)
     }
   },
   created () {
     this.formContract.contractDate = formatToString(new Date(), 'Simple', '-')
+    this.getAffiliatedCompany()
   },
   methods: {
+    ...mapActions([
+      'updateContractId'
+    ]),
     back () {
       this.$router.push({name: 'ContractList'})
     },
@@ -365,7 +395,7 @@ export default {
       let sum = 0
       this.formAdd.list.map((item, idx) => {
         sum += item.psum
-        if (item.fnumber === 3022) {
+        if (item.fnumber === '99.02.006' && item.fitemid === 3022) {
           hasZA = true
           this.azfee = item.psum
         }
@@ -498,13 +528,39 @@ export default {
         this.projectList = []
       }
     },
+    getAffiliatedCompany () {
+      var tmpData = '<?xml version="1.0" encoding="utf-8"?>'
+      tmpData += '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> '
+      tmpData += '<soap:Body> '
+      tmpData += '<JA_LIST xmlns="http://tempuri.org/">'
+      tmpData += '<FSQL>select fname,fitemid from t_item where fitemclassid=3002</FSQL>'
+      tmpData += '</JA_LIST>'
+      tmpData += '</soap:Body>'
+      tmpData += '</soap:Envelope>'
+      this.Http.post('JA_LIST', tmpData
+      ).then(res => {
+        let xml = res.data
+        let parser = new DOMParser()
+        let xmlDoc = parser.parseFromString(xml, 'text/xml')
+        // 提取数据
+        let Result = xmlDoc.getElementsByTagName('JA_LISTResponse')[0].getElementsByTagName('JA_LISTResult')[0]
+        let HtmlStr = $(Result).html()
+        this.affiliatedCompanyList = JSON.parse(HtmlStr)
+      }).catch((error) => {
+        this.$message({
+          message: '接口报错!',
+          type: 'error'
+        })
+        console.log(error)
+      })
+    },
     filterMethodPCode (val, idx) {
       if (val !== '') {
         var tmpData = '<?xml version="1.0" encoding="utf-8"?>'
         tmpData += '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> '
         tmpData += '<soap:Body> '
         tmpData += '<JA_LIST xmlns="http://tempuri.org/">'
-        tmpData += "<FSQL>select top 50 a.fitemid,a.fnumber,a.fname,a.fmodel,b.fname funit from t_icitem a inner join t_MeasureUnit b on a.funitid=b.fitemid  where a.fnumber like '%" + val + "%' order by a.fnumber</FSQL>"
+        tmpData += "<FSQL>select top 50 a.fitemid,a.fnumber,a.fname,a.fmodel,b.fname funit from t_icitem a inner join t_MeasureUnit b on a.funitid=b.fitemid  where a.fname like '%" + val + "%' order by a.fnumber</FSQL>"
         tmpData += '</JA_LIST>'
         tmpData += '</soap:Body>'
         tmpData += '</soap:Envelope>'
@@ -536,9 +592,44 @@ export default {
       this.curFItemID = val
       let options = this.formAdd.list[idx].productionCodeList
       let resultItem = (options.filter(this.checkPCode))[0]
+      this.formAdd.list[idx].fitemid = resultItem.fitemid
+      this.formAdd.list[idx].fnumber = resultItem.fnumber
       this.formAdd.list[idx].fname = resultItem.fname
       this.formAdd.list[idx].fmodel = resultItem.fmodel
       this.formAdd.list[idx].funit = resultItem.funit
+    },
+    // 合计
+    getSummaries (param) {
+      const { columns, data } = param
+      const sums = []
+      columns.forEach((column, index) => {
+        if (index === 0) {
+          sums[index] = '合计'
+          return
+        }
+        if (index === 4 || index === 6) {
+          sums[index] = data.reduce((prev, curr) => {
+            const Pamount = Number(curr.pamount)
+            const Psum = Number(curr.psum)
+            if (index === 4) {
+              if (!isNaN(Pamount)) {
+                return prev + Pamount
+              } else {
+                return prev
+              }
+            } else {
+              if (!isNaN(Psum)) {
+                return prev + Psum
+              } else {
+                return prev
+              }
+            }
+          }, 0)
+        } else {
+          sums[index] = ''
+        }
+      })
+      return sums
     },
     save () {
       // 为空校验
@@ -560,7 +651,7 @@ export default {
           return false
         } else {
           botData.items.push({
-            'FItemID': listData[i].fnumber,
+            'FItemID': listData[i].fitemid,
             'FQty': listData[i].pamount,
             'FPrice': listData[i].pprice,
             'FAmount': listData[i].psum,
@@ -572,11 +663,13 @@ export default {
       let topData = {
         'items': [{
           'FDate': this.formContract.contractDate,
-          'FExplanation': this.formContract.contractName ? this.formContract.contractName : 0,
-          'FSupplyID': this.formContract.constructionTeam ? this.formContract.constructionTeam : 0,
+          'FExplanation': this.formContract.contractName ? this.formContract.contractName : '',
+          'FTeam': this.formContract.constructionTeam ? this.formContract.constructionTeam : '',
           'FDeptID': this.formContract.department ? this.formContract.department : 0,
           'FEmpID': this.formContract.salesman ? this.formContract.salesman : 0,
-          'FProjectID': this.formContract.projectCode ? this.formContract.projectCode : 0
+          'FProjectID': this.formContract.projectCode ? this.formContract.projectCode : 0,
+          'FCompany': this.formContract.companyName ? this.formContract.companyName : '',
+          'FSupplyID': this.formContract.affiliatedCompany ? this.formContract.affiliatedCompany : 0
         }]
       }
       let fkData = {'items': [
@@ -633,12 +726,15 @@ export default {
         let Result = xmlDoc.getElementsByTagName('PayContractResponse')[0].getElementsByTagName('PayContractResult')[0]
         let HtmlStr = $(Result).html()
         let Info = (JSON.parse(HtmlStr))[0]
+        console.log(Info)
         if (Info.code === '1') {
           this.$message({
             message: '新增成功!',
             type: 'success'
           })
           this.btLoading = false
+          this.updateContractId(Info.ID)
+          this.$router.push({name: 'ContractDetail'})
           // 初始化界面
           // this.formContract = {
           //   contractDate: '',

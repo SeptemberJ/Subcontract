@@ -227,11 +227,16 @@ export default {
         let HtmlStr = $(Result).html()
         let Info = JSON.parse(HtmlStr)
         console.log(Info)
-        this.tableData = Info.map(item => {
-          item['合同名称'] = item['合同名称'] === '0' ? '' : item['合同名称']
-          return item
-        })
-        this.sum = Info[0].fcount
+        if (Info.length > 0) {
+          this.tableData = Info.map(item => {
+            item['合同名称'] = item['合同名称'] === '0' ? '' : item['合同名称']
+            return item
+          })
+          this.sum = Info[0].fcount
+        } else {
+          this.tableData = []
+          this.sum = []
+        }
       }).catch((error) => {
         console.log(error)
       })

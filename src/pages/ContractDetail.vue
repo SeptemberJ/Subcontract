@@ -27,7 +27,7 @@
             </el-col>
             <el-col :span="6">
               <el-form-item label="施工队" prop="constructionTeam">
-                <el-select v-model="formContract.constructionTeam" filterable remote :remote-method="changeTeam" placeholder="请输入关键字" style="width: 100%;float:left">
+                <el-select v-model="formContract.constructionTeam" placeholder="请选择所属公司" style="width: 90%;float:left">
                   <el-option
                     v-for="item in constructionTeamList"
                     :key="item.fitemid"
@@ -36,6 +36,16 @@
                   </el-option>
                 </el-select>
               </el-form-item>
+              <!-- <el-form-item label="施工队" prop="constructionTeam">
+                <el-select v-model="formContract.constructionTeam" filterable remote :remote-method="changeTeam" placeholder="请输入关键字" style="width: 100%;float:left">
+                  <el-option
+                    v-for="item in constructionTeamList"
+                    :key="item.fitemid"
+                    :label="item.fname"
+                    :value="item.fitemid">
+                  </el-option>
+                </el-select>
+              </el-form-item> -->
             </el-col>
           </el-row>
         </el-col>
@@ -66,7 +76,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item label="项目编号" prop="productionCode">
+              <el-form-item label="项目编号" prop="projectCode">
                 <el-select v-model="formContract.projectCode" filterable remote :remote-method="changeProject" placeholder="请输入关键字" style="width: 90%;float:left">
                   <el-option
                     v-for="item in projectList"
@@ -188,7 +198,7 @@
       <el-button icon="el-icon-plus" size="mini" @click="addLine">新增一行</el-button>
     </section>
     <!-- 付款比列 -->
-    <section class="MarginT_20 MarginB_20">
+    <!-- <section class="MarginT_20 MarginB_20">
       <p class="TextAlignL ModuleTit">付款比列</p>
       <el-row class="TextAlignL MarginB_10" style="font-size: 14px;padding:0 5px 5px 20px;">
         <el-col :span="20">
@@ -274,17 +284,203 @@
           <el-input type="textarea" :rows="5" placeholder="请输入付款条件" v-model="fkNote" style="width:95%;"></el-input>
         </el-col>
       </el-row>
+    </section> -->
+    <!-- 付款方式 -->
+    <section class="MarginT_20 MarginB_20">
+      <p class="TextAlignL ModuleTit">付款方式</p>
+      <el-row class="TextAlignL MarginB_10" style="font-size: 14px;padding:0 5px 5px 5px;">
+        <!-- 安装付款 -->
+        <el-col :span="12" class="TextAlignC">
+          <el-row style="padding-bottom: 10px;border-bottom: 1px solid #DCDFE6;">安装付款</el-row>
+          <el-row style="padding: 10px 0;">
+            <el-col :span="6">摘要</el-col>
+            <el-col :span="6">付款比例(%)</el-col>
+            <el-col :span="6">金额</el-col>
+            <el-col :span="6">备注</el-col>
+          </el-row>
+          <el-row style="padding: 10px 0;">
+            <el-col :span="6" style="padding-top: 6px;">进场后</el-col>
+            <el-col :span="6"><el-input v-model="jch.sjbl" size="mini" style="width: 85%;"></el-input></el-col>
+            <el-col :span="6" style="text-align:center;padding-top: 6px;">{{jch.yfje}}</el-col>
+            <el-col :span="6"><el-input v-model="jch.fnote" size="mini" style="width: 85%;"></el-input></el-col>
+          </el-row>
+          <el-row style="padding: 10px 0;">
+            <el-col :span="6" style="padding-top: 6px;">隐蔽验收</el-col>
+            <el-col :span="6"><el-input v-model="ybys.sjbl" size="mini" style="width: 85%;"></el-input></el-col>
+            <el-col :span="6" style="text-align:center;padding-top: 6px;">{{ybys.yfje}}</el-col>
+            <el-col :span="6"><el-input v-model="ybys.fnote" size="mini" style="width: 85%;"></el-input></el-col>
+          </el-row>
+          <el-row style="padding: 10px 0;">
+            <el-col :span="6" style="padding-top: 6px;">竣工验收</el-col>
+            <el-col :span="6"><el-input v-model="jgys.sjbl" size="mini" style="width: 85%;"></el-input></el-col>
+            <el-col :span="6" style="text-align:center;padding-top: 6px;">{{jgys.yfje}}</el-col>
+            <el-col :span="6"><el-input v-model="jgys.fnote" size="mini" style="width: 85%;"></el-input></el-col>
+          </el-row>
+          <el-row style="padding: 10px 0;">
+            <el-col :span="6" style="padding-top: 6px;">质保期</el-col>
+            <el-col :span="6"><el-input v-model="zbq.sjbl" size="mini" style="width: 85%;"></el-input></el-col>
+            <el-col :span="6" style="text-align:center;padding-top: 6px;">{{zbq.yfje}}</el-col>
+            <el-col :span="6"><el-input v-model="zbq.fnote" size="mini" style="width: 85%;"></el-input></el-col>
+          </el-row>
+          <el-row style="padding: 10px 0;">
+            <el-col :span="6">合计</el-col>
+            <el-col :span="6"><el-input style="opacity:0;"></el-input></el-col>
+            <el-col :span="6" style="text-align:center;padding-top: 6px;">{{(Number(jch.yfje) + Number(ybys.yfje) + Number(jgys.yfje) + Number(zbq.yfje)).toFixed(2)}}</el-col>
+            <el-col :span="6"></el-col>
+          </el-row>
+        </el-col>
+        <!-- 材料付费 -->
+        <el-col :span="12" class="TextAlignC" style="border-left: 1px solid #DCDFE6;">
+          <el-row style="padding-bottom: 10px;border-bottom: 1px solid #DCDFE6;">材料付费</el-row>
+          <el-row style="padding: 10px 0;">
+            <el-col :span="6">摘要</el-col>
+            <el-col :span="6">付款比例(%)</el-col>
+            <el-col :span="6">金额</el-col>
+            <el-col :span="6">备注</el-col>
+          </el-row>
+          <el-row style="padding: 10px 0;">
+            <el-col :span="6" style="padding-top: 6px;">竣工验收</el-col>
+            <el-col :span="6"><el-input v-model="jgys2.sjbl" size="mini" style="width: 85%;"></el-input></el-col>
+            <el-col :span="6" style="text-align:center;padding-top: 6px;">{{jgys2.yfje}}</el-col>
+            <el-col :span="6"><el-input v-model="jgys2.fnote" size="mini" style="width: 85%;"></el-input></el-col>
+          </el-row>
+          <el-row style="padding: 10px 0;">
+            <el-col :span="6" style="padding-top: 6px;">材料结算</el-col>
+            <el-col :span="6">--</el-col>
+            <el-col :span="6"><el-input v-model="cljs.yfje" size="mini" style="width: 85%;"></el-input></el-col>
+            <el-col :span="6"><el-input v-model="cljs.fnote" size="mini" style="width: 85%;"></el-input></el-col>
+          </el-row>
+          <el-row style="padding: 10px 0;">
+            <el-col :span="24"><el-input size="mini" style="opacity: 0;"></el-input></el-col>
+          </el-row>
+          <el-row style="padding: 10px 0;">
+            <el-col :span="6" style="padding-top: 6px;">差额</el-col>
+            <el-col :span="6"><el-input size="mini" style="opacity: 0;"></el-input></el-col>
+            <el-col :span="6" style="text-align:center;padding-top: 6px;">{{(jgys2.yfje - cljs.yfje).toFixed(2)}}</el-col>
+            <el-col :span="6"></el-col>
+          </el-row>
+          <el-row style="padding: 10px 0;">
+            <el-col :span="6">合计</el-col>
+            <el-col :span="6"><el-input style="opacity:0;"></el-input></el-col>
+            <el-col :span="6" style="text-align:center;padding-top: 6px;">{{(jgys2.yfje - cljs.yfje).toFixed(2)}}</el-col>
+            <el-col :span="6"></el-col>
+          </el-row>
+        </el-col>
+        <el-col :span="24" style="border-top: 1px solid #DCDFE6;border-bottom: 1px solid #DCDFE6;">
+          <el-row style="padding: 10px 0;">
+            <el-col :span="3" class="TextAlignC">总计</el-col>
+            <el-col :span="21" style="text-align:center;">{{(Number(jch.yfje) + Number(ybys.yfje) + Number(jgys.yfje) + Number(zbq.yfje) + Number(jgys2.yfje) - Number(cljs.yfje)).toFixed(2)}}</el-col>
+          </el-row>
+        </el-col>
+      </el-row>
+    </section>
+    <!-- 附件上传 -->
+    <section class="MarginT_20 MarginB_20">
+      <p class="TextAlignL ModuleTit">附件上传</p>
+      <el-row class="TextAlignL MarginB_10" style="font-size: 14px;padding:0 5px 5px 5px;">
+        <!-- 施工合同 -->
+        <el-col :span="12" class="TextAlignC" style="border-right: 1px solid #DCDFE6;">
+          <el-row style="padding-bottom: 10px;border-bottom: 1px solid #DCDFE6;">施工合同</el-row>
+          <el-row style="padding: 10px 0;">
+            <p v-if="fileList['施工合同']['施工合同'].length == 0" class="TextAlignL PaddingL_28">无相关文件</p>
+            <div v-else>
+              <p class="TextAlignL MarginB_10" v-for="(file, idx) in fileList['施工合同']['施工合同']" :key="idx">
+                <span class="TextIndent">{{idx + 1}}.  <a :href="file.srcAfter" target="_blank">{{file.fileName}}</a></span>
+                <span style="float:right;" v-if="formContract.checkStatus == '未审核'">
+                  <i class="el-icon-delete CursorPointer" style="margin-right: 10px;" @click="deleteFile(file, '施工合同')"></i>
+                </span>
+              </p>
+            </div>
+          </el-row>
+          <el-row style="padding: 10px 0;" v-if="formContract.checkStatus == '未审核'">
+            <el-form :model="formSght" :rules="rulesFile" ref="formSght" label-width="10px" label-position="left">
+              <el-col :span="12">
+                <el-form-item label="" prop="fileName" class="TextAlignR">
+                  <el-upload
+                    class="upload-demo"
+                    ref="upload_formSght"
+                    v-model="formSght.fileName"
+                    :action="uploadAdr"
+                    :file-list="curFileList_formSght"
+                    :on-change="(file, fileList)=>{changeFile(file, fileList, 'formSght')}"
+                    :on-success="(val)=>{handleUploadSuccess(val, '施工合同', 'formSght')}"
+                    :on-remove="(file, fileList)=>{removeFile(file, fileList, 'formSght')}"
+                    :auto-upload="false">
+                    <el-button slot="trigger" size="small" icon="el-icon-upload" type="">选取文件</el-button>
+                  </el-upload>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="" class="TextAlignL">
+                  <el-button type="primary" size="small" @click="uploadFile('formSght', '施工合同')">提 交</el-button>
+                </el-form-item>
+              </el-col>
+            </el-form>
+          </el-row>
+        </el-col>
+        <!-- 付款申请单 -->
+        <el-col :span="12" class="TextAlignC">
+          <el-row style="padding-bottom: 10px;border-bottom: 1px solid #DCDFE6;">付款申请单</el-row>
+          <el-row style="padding: 10px 0;">
+            <p v-if="fileList['付款申请单']['付款申请单'].length == 0" class="TextAlignL PaddingL_28">无相关文件</p>
+            <div v-else>
+              <p class="TextAlignL MarginB_10" v-for="(file, idx) in fileList['付款申请单']['付款申请单']" :key="idx">
+                <span class="TextIndent">{{idx + 1}}.  <a :href="file.srcAfter" target="_blank">{{file.fileName}}</a></span>
+                <span style="float:right;" v-if="formContract.checkStatus == '未审核'">
+                  <i class="el-icon-delete CursorPointer" style="margin-right: 10px;" @click="deleteFile(file, '付款申请单')"></i>
+                </span>
+              </p>
+            </div>
+          </el-row>
+          <el-row style="padding: 10px 0;" v-if="formContract.checkStatus == '未审核'">
+            <el-form :model="formFksqd" :rules="rulesFile" ref="formFksqd" label-width="10px" label-position="left">
+              <el-col :span="12">
+                <el-form-item label="" prop="fileName" class="TextAlignR">
+                  <el-upload
+                    class="upload-demo"
+                    ref="upload_formFksqd"
+                    v-model="formFksqd.fileName"
+                    :action="uploadAdr"
+                    :file-list="curFileList_formFksqd"
+                    :on-change="(file, fileList)=>{changeFile(file, fileList, 'formFksqd')}"
+                    :on-success="(val)=>{handleUploadSuccess(val, '付款申请单', 'formFksqd')}"
+                    :on-remove="(file, fileList)=>{removeFile(file, fileList, 'formFksqd')}"
+                    :auto-upload="false">
+                    <el-button slot="trigger" size="small" icon="el-icon-upload" type="">选取文件</el-button>
+                  </el-upload>
+                </el-form-item>
+              </el-col>
+              <el-col :span="12">
+                <el-form-item label="" class="TextAlignL">
+                  <el-button type="primary" size="small" @click="uploadFile('formFksqd', '付款申请单')">提 交</el-button>
+                </el-form-item>
+              </el-col>
+            </el-form>
+          </el-row>
+        </el-col>
+      </el-row>
     </section>
     <section class="MarginT_20 MarginB_20">
       <el-button type="info" size="mini" @click="back">返 回</el-button>
-      <el-button type="danger" size="mini" :loading="btLoading" @click="save">保存修改</el-button>
+      <el-button  v-if="formContract.checkStatus == '未审核'" type="danger" size="mini" :loading="btLoading" @click="save">保存修改</el-button>
+      <el-button type="primary" size="mini" @click="showSGFY">施工费用</el-button>
     </section>
+    <!-- 施工费用 -->
+    <el-dialog
+      title="施工费用"
+      :visible.sync="dialogVisibleSGFY"
+      fullscreen>
+      <Fee :projectCode="formContract.XMBH" :constructionTeam="formContract.SGD"/>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleSGFY = false">关 闭</el-button>
+      </span>
+    </el-dialog>
     <!-- 导入Excel -->
     <!-- <el-upload
       class="upload-demo"
       ref="upload"
       action="https://jsonplaceholder.typicode.com/posts/"
-      :on-change="changeFile"
+      :on-change="changeFileExcel"
       :multiple="false"
       :auto-upload="false"
       :show-file-list="false">
@@ -296,6 +492,7 @@
 <script>
 import { mapState } from 'vuex'
 import $ from 'jquery'
+import Fee from '../components/Fee'
 // import {formatToString} from '../util/utils'
 import XLSX from 'xlsx'
 export default {
@@ -315,8 +512,26 @@ export default {
         affiliatedCompany: ''
       },
       rules: {
-        contractDate: [
-          { required: true, message: '请选择合同日期', trigger: 'change' }
+        // contractDate: [
+        //   { required: true, message: '请选择合同日期', trigger: 'change' }
+        // ]
+        contractName: [
+          { required: true, message: '请输入合同名称', trigger: 'change' }
+        ],
+        constructionTeam: [
+          { required: true, message: '请选择施工队', trigger: 'change' }
+        ],
+        department: [
+          { required: true, message: '请选择部门', trigger: 'change' }
+        ],
+        salesman: [
+          { required: true, message: '请选择业务员', trigger: 'change' }
+        ],
+        projectCode: [
+          { required: true, message: '请选择项目编号', trigger: 'change' }
+        ],
+        affiliatedCompany: [
+          { required: true, message: '请选择所属公司', trigger: 'change' }
         ]
       },
       curFItemID: null, // 当前选择的产品代码项
@@ -328,28 +543,58 @@ export default {
       salesmanList: [],
       projectList: [],
       affiliatedCompanyList: [],
-      jch: {sjbl: 0, yfje: 0, sjje: 0, fdate: ''},
-      ybys: {sjbl: 0, yfje: 0, sjje: 0, fdate: ''},
-      jgys: {sjbl: 0, yfje: 0, sjje: 0, fdate: ''},
-      zbq: {sjbl: 0, yfje: 0, sjje: 0, fdate: ''},
-      fkNote: '',
-      azfee: 0, // 安装费
-      psumTotal: 0 // 价税合计总额
+      jch: {sjbl: 0, yfje: '0.00', sjje: '0.00', ftype: '安装付款', fnote: ''},
+      ybys: {sjbl: 0, yfje: '0.00', sjje: '0.00', ftype: '安装付款', fnote: ''},
+      jgys: {sjbl: 0, yfje: '0.00', sjje: '0.00', ftype: '安装付款', fnote: ''},
+      zbq: {sjbl: 0, yfje: '0.00', sjje: '0.00', ftype: '安装付款', fnote: ''},
+      jgys2: {sjbl: 0, yfje: '0.00', sjje: '0.00', ftype: '材料付款', fnote: ''},
+      cljs: {sjbl: 0, yfje: '0.00', sjje: '0.00', ftype: '材料付款', fnote: ''},
+      // fkNote: '',
+      azfee: 0.00, // 安装费
+      psumTotal: 0.00, // 价税合计总额
+      formSght: {
+        fileName: ''
+      },
+      formFksqd: {
+        fileName: ''
+      },
+      curFileList_formSght: [],
+      curFileList_formFksqd: [],
+      formAppend: {
+        fileName: ''
+      },
+      rulesFile: {
+        fileName: [
+          { required: true, message: '请选择需要上传的文件!', trigger: 'change' }
+        ]
+      },
+      fileList: {
+        '施工合同': {'施工合同': []},
+        '付款申请单': {'付款申请单': []}
+      },
+      dialogVisibleSGFY: false
     }
   },
   computed: {
     ...mapState({
       contractId: state => state.contractId
-    })
+    }),
+    uploadAdr () {
+      return 'http://zicpp.zicp.vip:59215/fushengJK/uploadFileZT?mulu=' + `${this.formContract.contractNo}`
+    }
   },
   watch: {
     psumTotal: function (newVal) {
-      this.jgys.yfje = (newVal * (this.jgys.sjbl / 100)).toFixed(2)
-      this.zbq.yfje = (newVal * (this.zbq.sjbl / 100)).toFixed(2)
+      this.jgys2.yfje = ((newVal - this.azfee) * (this.jgys2.sjbl / 100)).toFixed(2)
     },
+    // clfee: function (newVal) {
+    //   this.jgys2.yfje = (newVal * (this.jgys2.sjbl / 100)).toFixed(2)
+    // },
     azfee: function (newVal) {
       this.jch.yfje = (newVal * (this.jch.sjbl / 100)).toFixed(2)
       this.ybys.yfje = (newVal * (this.ybys.sjbl / 100)).toFixed(2)
+      this.jgys.yfje = (newVal * (this.jgys.sjbl / 100)).toFixed(2)
+      this.zbq.yfje = (newVal * (this.zbq.sjbl / 100)).toFixed(2)
     },
     'jch.sjbl': function (newVal) {
       this.jch.yfje = (this.azfee * (newVal / 100)).toFixed(2)
@@ -358,20 +603,33 @@ export default {
       this.ybys.yfje = (this.azfee * (newVal / 100)).toFixed(2)
     },
     'jgys.sjbl': function (newVal) {
-      this.jgys.yfje = (this.psumTotal * (newVal / 100)).toFixed(2)
+      this.jgys.yfje = (this.azfee * (newVal / 100)).toFixed(2)
     },
     'zbq.sjbl': function (newVal) {
-      this.zbq.yfje = (this.psumTotal * (newVal / 100)).toFixed(2)
+      this.zbq.yfje = (this.azfee * (newVal / 100)).toFixed(2)
+    },
+    'jgys2.sjbl': function (newVal) {
+      this.jgys2.yfje = ((this.psumTotal - this.azfee) * (newVal / 100)).toFixed(2)
     }
+  },
+  components: {
+    Fee
   },
   created () {
     this.getDetail()
-    this.getFKDetail()
+    // this.getFKDetail()
     this.getAffiliatedCompany()
+    this.getConstructionTeam()
   },
   methods: {
     back () {
       this.$router.push({name: 'ContractList'})
+    },
+    showSGFY () {
+      this.dialogVisibleSGFY = true
+    },
+    openUrl (url) {
+      window.open(encodeURI(url), '_blank')
     },
     addLine () {
       this.formAdd.list.push({fnumber: '', fname: '', fmodel: '', pamount: '', pprice: '', psum: '', pnote: '', funit: '', productionCodeList: []})
@@ -380,7 +638,7 @@ export default {
       this.formAdd.list.splice(idx, 1)
       this.updateFee()
     },
-    changeFile (file, fileList) {
+    changeFileExcel (file, fileList) {
       let files = {0: file.raw}
       this.readExcel1(files)
     },
@@ -505,6 +763,32 @@ export default {
         this.projectList = []
       }
     },
+    getConstructionTeam () {
+      var tmpData = '<?xml version="1.0" encoding="utf-8"?>'
+      tmpData += '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> '
+      tmpData += '<soap:Body> '
+      tmpData += '<JA_LIST xmlns="http://tempuri.org/">'
+      tmpData += '<FSQL>select fitemid,fname from t_Item where fitemclassid=3004</FSQL>'
+      tmpData += '</JA_LIST>'
+      tmpData += '</soap:Body>'
+      tmpData += '</soap:Envelope>'
+      this.Http.post('JA_LIST', tmpData
+      ).then(res => {
+        let xml = res.data
+        let parser = new DOMParser()
+        let xmlDoc = parser.parseFromString(xml, 'text/xml')
+        // 提取数据
+        let Result = xmlDoc.getElementsByTagName('JA_LISTResponse')[0].getElementsByTagName('JA_LISTResult')[0]
+        let HtmlStr = $(Result).html()
+        this.constructionTeamList = JSON.parse(HtmlStr)
+      }).catch((error) => {
+        this.$message({
+          message: '接口报错!',
+          type: 'error'
+        })
+        console.log(error)
+      })
+    },
     getAffiliatedCompany () {
       var tmpData = '<?xml version="1.0" encoding="utf-8"?>'
       tmpData += '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> '
@@ -574,6 +858,7 @@ export default {
       this.formAdd.list[idx].fname = resultItem.fname
       this.formAdd.list[idx].fmodel = resultItem.fmodel
       this.formAdd.list[idx].funit = resultItem.funit
+      this.updateFee()
     },
     // 计算总价格
     calculate (idx) {
@@ -586,19 +871,28 @@ export default {
       this.updateFee()
     },
     updateFee () {
-      let hasZA = false
-      let sum = 0
+      this.azfee = 0.00
+      let hasAZ = false
+      // let hasCL = false
+      let sum = 0.00
       this.formAdd.list.map((item, idx) => {
         sum += item.psum
         if (item.fnumber === '99.02.006' && item.fitemid === 3022) {
-          hasZA = true
-          this.azfee = item.psum
+          hasAZ = true
+          this.azfee = this.azfee + item.psum
         }
+        // if (item.fnumber === '99.02.034' && item.fitemid === 7273) {
+        //   hasCL = true
+        //   this.clfee = item.psum
+        // }
         if (idx === this.formAdd.list.length - 1) {
           this.psumTotal = sum
-          if (!hasZA) {
-            this.azfee = 0
+          if (!hasAZ) {
+            this.azfee = 0.00
           }
+          // if (!hasCL) {
+          //   this.clfee = 0.00
+          // }
         }
       })
     },
@@ -606,33 +900,40 @@ export default {
     getSummaries (param) {
       const { columns, data } = param
       const sums = []
-      columns.forEach((column, index) => {
-        if (index === 0) {
-          sums[index] = '合计'
-          return
-        }
-        if (index === 4 || index === 6) {
-          sums[index] = data.reduce((prev, curr) => {
-            const Pamount = Number(curr.pamount)
-            const Psum = Number(curr.psum)
-            if (index === 4) {
-              if (!isNaN(Pamount)) {
-                return prev + Pamount
+      if (columns.length > 0) {
+        columns.forEach((column, index) => {
+          if (index === 0) {
+            sums[index] = '合计'
+            return
+          }
+          if (index === 4 || index === 6) {
+            let Sum = data.reduce((prev, curr) => {
+              const Pamount = curr.pamount
+              const Psum = curr.psum
+              const Prev = prev
+              if (index === 4) {
+                if (!isNaN(Pamount)) {
+                  // console.log(Prev, Pamount)
+                  return Number(Prev) + Number((Pamount === '' ? 0 : Pamount))
+                } else {
+                  return Prev
+                }
               } else {
-                return prev
+                if (!isNaN(Psum)) {
+                  return Number(Prev) + Number((Psum === '' ? 0 : Psum))
+                } else {
+                  return Number(Prev)
+                }
               }
-            } else {
-              if (!isNaN(Psum)) {
-                return prev + Psum
-              } else {
-                return prev
-              }
-            }
-          }, 0)
-        } else {
-          sums[index] = ''
-        }
-      })
+            }, 0)
+            // console.log('Number(Sum)', Number(Sum))
+            // debugger
+            sums[index] = (Number(Sum)).toFixed(2)
+          } else {
+            sums[index] = ''
+          }
+        })
+      }
       return sums
     },
     save () {
@@ -674,33 +975,50 @@ export default {
           'fper': this.jch.sjbl + '%',
           'fname': '进场后',
           'famount': this.jch.yfje,
-          'fdecimal': this.jch.sjje,
-          'fdate': this.jch.fdate,
-          'fnote': this.fkNote
+          'fnote': this.jch.fnote,
+          'ftype': '安装付款'
         },
         {
           'fper': this.ybys.sjbl + '%',
           'fname': '隐蔽验收',
           'famount': this.ybys.yfje,
-          'fdecimal': this.ybys.sjje,
-          'fdate': this.ybys.fdate,
-          'fnote': this.fkNote
+          'fnote': this.ybys.fnote,
+          'ftype': '安装付款'
         },
         {
           'fper': this.jgys.sjbl + '%',
           'fname': '竣工验收',
           'famount': this.jgys.yfje,
-          'fdecimal': this.jgys.sjje,
-          'fdate': this.jgys.fdate,
-          'fnote': this.fkNote
+          'fnote': this.jgys.fnote,
+          'ftype': '安装付款'
         },
         {
           'fper': this.zbq.sjbl + '%',
           'fname': '质保期',
           'famount': this.zbq.yfje,
-          'fdecimal': this.zbq.sjje,
-          'fdate': this.zbq.fdate,
-          'fnote': this.fkNote
+          'fnote': this.zbq.fnote,
+          'ftype': '安装付款'
+        },
+        {
+          'fper': this.jgys2.sjbl + '%',
+          'fname': '竣工验收',
+          'famount': this.jgys2.yfje,
+          'fnote': this.jgys2.fnote,
+          'ftype': '材料付款'
+        },
+        {
+          'fper': '0%',
+          'fname': '材料结算',
+          'famount': this.cljs.yfje,
+          'fnote': this.cljs.fnote,
+          'ftype': '材料付款'
+        },
+        {
+          'fper': '0%',
+          'fname': '差额',
+          'famount': (Number(this.jgys2.yfje) - Number(this.cljs.yfje)).toFixed(2),
+          'fnote': '',
+          'ftype': '材料付款'
         }
       ]}
       var tmpData = '<?xml version="1.0" encoding="utf-8"?>'
@@ -761,18 +1079,21 @@ export default {
         let Result = xmlDoc.getElementsByTagName('JA_LISTResponse')[0].getElementsByTagName('JA_LISTResult')[0]
         let HtmlStr = $(Result).html()
         let Info = JSON.parse(HtmlStr)
-        console.log('Info', Info)
+        console.log('Detail', Info)
         if (Info.length > 0) {
           this.formContract = {
             contractDate: Info[0]['合同日期'],
             contractName: Info[0]['合同名称'] === '0' ? '' : Info[0]['合同名称'],
             contractNo: Info[0]['合同号'],
-            constructionTeam: Info[0]['施工队'],
+            constructionTeam: Info[0].FTeamID === 0 ? '' : Info[0].FTeamID,
             department: Info[0].FDeptID === 0 ? '' : Info[0].FDeptID,
             salesman: Info[0].FEmpID === 0 ? '' : Info[0].FEmpID,
             projectCode: Info[0].FProjectID === 0 ? '' : Info[0].FProjectID,
             companyName: Info[0]['公司名称'],
-            affiliatedCompany: Info[0].FSupplyID === 0 ? '' : Info[0].FSupplyID
+            affiliatedCompany: Info[0].FSupplyID === 0 ? '' : Info[0].FSupplyID,
+            checkStatus: Info[0]['审核状态'],
+            XMBH: Info[0]['项目编号'],
+            SGD: Info[0]['施工队']
           }
           // 初始化下拉框选项
           // this.changeTeam(Info[0]['施工队'])
@@ -795,6 +1116,9 @@ export default {
             this.filterMethodPCode(item['产品名称'], idx)
           })
           this.updateFee()
+          this.getFKDetail()
+          this.getFileList('施工合同')
+          this.getFileList('付款申请单')
         }
       }).catch((error) => {
         console.log(error)
@@ -805,7 +1129,7 @@ export default {
       tmpData += '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> '
       tmpData += '<soap:Body> '
       tmpData += '<JA_LIST xmlns="http://tempuri.org/">'
-      tmpData += "<FSQL><![CDATA[select FPer,FName,FAmount,FDecimal,(case when convert(varchar(50),fdate,23)='1900-01-01' then '' else convert(varchar(50),fdate,23) end) FDate,FNote from  Z_Paypercent where finterid=" + this.contractId + ']]></FSQL>'
+      tmpData += '<FSQL><![CDATA[select FPer,FName,FAmount,FNote,FType from Z_Paypercent where finterid=' + this.contractId + ']]></FSQL>'
       tmpData += '</JA_LIST>'
       tmpData += '</soap:Body>'
       tmpData += '</soap:Envelope>'
@@ -819,22 +1143,40 @@ export default {
         let Result = xmlDoc.getElementsByTagName('JA_LISTResponse')[0].getElementsByTagName('JA_LISTResult')[0]
         let HtmlStr = $(Result).html()
         let Info = JSON.parse(HtmlStr)
-        console.log(Info)
+        console.log('FKDetail', Info)
         if (Info.length > 0) {
-          this.fkNote = Info[0].FNote
           Info.map(item => {
             switch (item.FName) {
               case '进场后':
-                this.jch = {sjbl: item.FPer.replace('%', ''), yfje: item.FAmount, sjje: item.FDecimal, fdate: item.FDate}
+                this.jch.sjbl = item.FPer.replace('%', '')
+                this.jch.fnote = item.FNote
+                // this.jch = {sjbl: item.FPer.replace('%', ''), yfje: item.FAmount, fnote: item.FNote, ftype: item.FType}
                 break
               case '隐蔽验收':
-                this.ybys = {sjbl: item.FPer.replace('%', ''), yfje: item.FAmount, sjje: item.FDecimal, fdate: item.FDate}
+                this.ybys.sjbl = item.FPer.replace('%', '')
+                this.ybys.fnote = item.FNote
+                // this.ybys = {sjbl: item.FPer.replace('%', ''), yfje: item.FAmount, fnote: item.FNote, ftype: item.FType}
                 break
               case '竣工验收':
-                this.jgys = {sjbl: item.FPer.replace('%', ''), yfje: item.FAmount, sjje: item.FDecimal, fdate: item.FDate}
+                if (item.FType === '安装付款') {
+                  this.jgys.sjbl = item.FPer.replace('%', '')
+                  this.jgys.fnote = item.FNote
+                  // this.jgys = {sjbl: item.FPer.replace('%', ''), yfje: item.FAmount, fnote: item.FNote, ftype: item.FType}
+                }
+                if (item.FType === '材料付款') {
+                  this.jgys2.sjbl = item.FPer.replace('%', '')
+                  this.jgys2.fnote = item.FNote
+                }
                 break
               case '质保期':
-                this.zbq = {sjbl: item.FPer.replace('%', ''), yfje: item.FAmount, sjje: item.FDecimal, fdate: item.FDate}
+                this.zbq.sjbl = item.FPer.replace('%', '')
+                this.zbq.fnote = item.FNote
+                // this.zbq = {sjbl: item.FPer.replace('%', ''), yfje: item.FAmount, fnote: item.FNote, ftype: item.FType}
+                break
+              case '材料结算':
+                this.cljs.yfje = item.FAmount
+                this.cljs.fnote = item.FNote
+                // this.cljs = {sjbl: item.FPer.replace('%', ''), yfje: item.FAmount, fnote: item.FNote, ftype: item.FType}
                 break
             }
           })
@@ -869,6 +1211,157 @@ export default {
         //     this.filterMethodPCode(item['产品代码'], idx)
         //   })
         // }
+      }).catch((error) => {
+        console.log(error)
+      })
+    },
+    handleUploadSuccess (response, stage, formName) {
+      this.formAppend.fileName = response.filename
+      this.submit(response.filename, stage, formName)
+    },
+    removeFile (file, fileList, formName) {
+      this['curFileList_' + formName] = []
+      this.formAppend.fileName = ''
+    },
+    changeFile (file, fileList, formName) {
+      this['curFileList_' + formName] = []
+      this['curFileList_' + formName].push(file)
+      this[formName].fileName = file.name
+    },
+    uploadFile (formName, stage) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.$refs['upload_' + formName].submit()
+        } else {
+          this.$message({
+            message: '请将信息补充完整！',
+            type: 'warning'
+          })
+        }
+      })
+    },
+    submit (filename, stage, formName) {
+      var tmpData = '<?xml version="1.0" encoding="utf-8"?>'
+      tmpData += '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> '
+      tmpData += '<soap:Body> '
+      tmpData += '<PIC_UPLoad_Pay xmlns="http://tempuri.org/">'
+      tmpData += '<FContractNo>' + this.formContract.contractNo + '</FContractNo>'
+      tmpData += '<FType>' + stage + '</FType>'
+      tmpData += '<FPath>' + filename + '</FPath>'
+      tmpData += '</PIC_UPLoad_Pay>'
+      tmpData += '</soap:Body>'
+      tmpData += '</soap:Envelope>'
+
+      this.Http.post('PIC_UPLoad_Pay', tmpData
+      ).then(res => {
+        let xml = res.data
+        let parser = new DOMParser()
+        let xmlDoc = parser.parseFromString(xml, 'text/xml')
+        // 提取数据
+        let Result = xmlDoc.getElementsByTagName('PIC_UPLoad_PayResponse')[0].getElementsByTagName('PIC_UPLoad_PayResult')[0]
+        let HtmlStr = $(Result).html()
+        let Info = (JSON.parse(HtmlStr))[0]
+        if (Info.code === '1') {
+          this.$message({
+            message: '上传成功!',
+            type: 'success'
+          })
+          this.getFileList('施工合同')
+          this.getFileList('付款申请单')
+          this.removeFile(null, null, formName)
+        } else {
+          this.$message({
+            message: '上传失败!',
+            type: 'error'
+          })
+        }
+      }).catch((error) => {
+        console.log(error)
+      })
+    },
+    deleteFile (file, stage) {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.sureDeleteFile(file, stage)
+      }).catch(() => {
+      })
+    },
+    sureDeleteFile (file, stage) {
+      // 删除文件
+      var tmpData = '<?xml version="1.0" encoding="utf-8"?>'
+      tmpData += '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> '
+      tmpData += '<soap:Body> '
+      tmpData += '<PIC_UPLoad_DEL_Pay xmlns="http://tempuri.org/">'
+      tmpData += '<FContractNo>' + this.formContract.contractNo + '</FContractNo>'
+      tmpData += '<FType>' + stage + '</FType>'
+      tmpData += '<FPath>' + file.fileName + '</FPath>'
+      tmpData += '</PIC_UPLoad_DEL_Pay>'
+      tmpData += '</soap:Body>'
+      tmpData += '</soap:Envelope>'
+
+      this.Http.post('PIC_UPLoad_DEL_Pay', tmpData
+      ).then(res => {
+        let xml = res.data
+        let parser = new DOMParser()
+        let xmlDoc = parser.parseFromString(xml, 'text/xml')
+        // 提取数据
+        let Result = xmlDoc.getElementsByTagName('PIC_UPLoad_DEL_PayResponse')[0].getElementsByTagName('PIC_UPLoad_DEL_PayResult')[0]
+        let HtmlStr = $(Result).html()
+        let Info = (JSON.parse(HtmlStr))[0]
+        if (Info.code === '1') {
+          this.$message({
+            message: '删除成功!',
+            type: 'success'
+          })
+          this.getFileList('施工合同')
+          this.getFileList('付款申请单')
+        } else {
+          this.$message({
+            message: '删除失败!',
+            type: 'error'
+          })
+        }
+      }).catch((error) => {
+        console.log(error)
+      })
+    },
+    // 查询之前上传的文件
+    getFileList (Ftype) {
+      this.fileList = {
+        '施工合同': {'施工合同': []},
+        '付款申请单': {'付款申请单': []}
+      }
+      var tmpData = '<?xml version="1.0" encoding="utf-8"?>'
+      tmpData += '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> '
+      tmpData += '<soap:Body> '
+      tmpData += '<JA_LIST xmlns="http://tempuri.org/">'
+      tmpData += "<FSQL>select FContractNo 合同号,FType 阶段,'http://zicpp.zicp.vip:59215/zetian_file/'+fcontractno+'/'+fpath 文件路径 from z_file_pay where FContractNo='" + this.formContract.contractNo + "' and ftype='" + Ftype + "'</FSQL>"
+      tmpData += '</JA_LIST>'
+      tmpData += '</soap:Body>'
+      tmpData += '</soap:Envelope>'
+
+      this.Http.post('JA_LIST', tmpData
+      ).then(res => {
+        let xml = res.data
+        let parser = new DOMParser()
+        let xmlDoc = parser.parseFromString(xml, 'text/xml')
+        // 提取数据
+        let Result = xmlDoc.getElementsByTagName('JA_LISTResponse')[0].getElementsByTagName('JA_LISTResult')[0]
+        let HtmlStr = $(Result).html()
+        let Info = (JSON.parse(HtmlStr))
+        console.log('orignFile', Info)
+        Info.map(item => {
+          // item.fileDate = item.fdate ? item.fdate : ''
+          item.srcAfter = item['文件路径'].replace('#', '%23')
+          // item.srcAfter = item['文件路径'].replace(/\s+/g, '%20')
+          let startiIdx = item['文件路径'].indexOf(this.formContract.contractNo) + this.formContract.contractNo.length + 1
+          item.fileName = item['文件路径'].slice(startiIdx)
+          this.fileList[Ftype][Ftype].push(item)
+        })
+        // console.log('fileList', this.fileList)
       }).catch((error) => {
         console.log(error)
       })

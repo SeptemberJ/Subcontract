@@ -22,16 +22,26 @@
             </el-col>
             <el-col :span="6">
               <el-form-item label="施工队" prop="constructionTeam">
-                <el-input v-model="formContract.constructionTeam" clearable placeholder="请输入施工队" style="width: 90%;float:left"></el-input>
-                <!-- <el-select v-model="formContract.constructionTeam" filterable remote :remote-method="changeTeam" placeholder="请输入关键字" style="width: 90%;float:left">
+                <el-select v-model="formContract.constructionTeam" placeholder="请选择所属公司" style="width: 90%;float:left">
                   <el-option
                     v-for="item in constructionTeamList"
                     :key="item.fitemid"
                     :label="item.fname"
                     :value="item.fitemid">
                   </el-option>
-                </el-select> -->
+                </el-select>
               </el-form-item>
+              <!-- <el-form-item label="施工队" prop="constructionTeam">
+                <el-input v-model="formContract.constructionTeam" clearable placeholder="请输入施工队" style="width: 90%;float:left"></el-input>
+                <el-select v-model="formContract.constructionTeam" filterable remote :remote-method="changeTeam" placeholder="请输入关键字" style="width: 90%;float:left">
+                  <el-option
+                    v-for="item in constructionTeamList"
+                    :key="item.fitemid"
+                    :label="item.fname"
+                    :value="item.fitemid">
+                  </el-option>
+                </el-select>
+              </el-form-item> -->
             </el-col>
             <el-col :span="6">
               <el-form-item label="部门" prop="department">
@@ -62,7 +72,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item label="项目编号" prop="productionCode">
+              <el-form-item label="项目编号" prop="projectCode">
                 <el-select v-model="formContract.projectCode" filterable remote :remote-method="changeProject" placeholder="请输入关键字" style="width: 90%;float:left">
                   <el-option
                     v-for="item in projectList"
@@ -179,7 +189,7 @@
       <el-button icon="el-icon-plus" size="mini" @click="addLine">新增一行</el-button>
     </section>
     <!-- 付款比列 -->
-    <section class="MarginT_20 MarginB_20">
+    <!-- <section class="MarginT_20 MarginB_20">
       <p class="TextAlignL ModuleTit">付款比列</p>
       <el-row class="TextAlignL MarginB_10" style="font-size: 14px;padding:0 5px 5px 20px;">
         <el-col :span="20">
@@ -265,10 +275,100 @@
           <el-input type="textarea" :rows="5" placeholder="请输入付款条件" v-model="fkNote" style="width:95%;"></el-input>
         </el-col>
       </el-row>
+    </section> -->
+    <!-- 付款方式 -->
+    <section class="MarginT_20 MarginB_20">
+      <!-- {{azfee}} -- {{psumTotal}} -- {{psumTotal - azfee}} -->
+      <p class="TextAlignL ModuleTit">付款方式</p>
+      <el-row class="TextAlignL MarginB_10" style="font-size: 14px;padding:0 5px 5px 5px;">
+        <!-- 安装付款 -->
+        <el-col :span="12" class="TextAlignC">
+          <el-row style="padding-bottom: 10px;border-bottom: 1px solid #DCDFE6;">安装付款</el-row>
+          <el-row style="padding: 10px 0;">
+            <el-col :span="6">摘要</el-col>
+            <el-col :span="6">付款比例(%)</el-col>
+            <el-col :span="6">金额</el-col>
+            <el-col :span="6">备注</el-col>
+          </el-row>
+          <el-row style="padding: 10px 0;">
+            <el-col :span="6" style="padding-top: 6px;">进场后</el-col>
+            <el-col :span="6"><el-input v-model="jch.sjbl" size="mini" style="width: 85%;"></el-input></el-col>
+            <el-col :span="6" style="text-align:center;padding-top: 6px;">{{jch.yfje}}</el-col>
+            <el-col :span="6"><el-input v-model="jch.fnote" size="mini" style="width: 85%;"></el-input></el-col>
+          </el-row>
+          <el-row style="padding: 10px 0;">
+            <el-col :span="6" style="padding-top: 6px;">隐蔽验收</el-col>
+            <el-col :span="6"><el-input v-model="ybys.sjbl" size="mini" style="width: 85%;"></el-input></el-col>
+            <el-col :span="6" style="text-align:center;padding-top: 6px;">{{ybys.yfje}}</el-col>
+            <el-col :span="6"><el-input v-model="ybys.fnote" size="mini" style="width: 85%;"></el-input></el-col>
+          </el-row>
+          <el-row style="padding: 10px 0;">
+            <el-col :span="6" style="padding-top: 6px;">竣工验收</el-col>
+            <el-col :span="6"><el-input v-model="jgys.sjbl" size="mini" style="width: 85%;"></el-input></el-col>
+            <el-col :span="6" style="text-align:center;padding-top: 6px;">{{jgys.yfje}}</el-col>
+            <el-col :span="6"><el-input v-model="jgys.fnote" size="mini" style="width: 85%;"></el-input></el-col>
+          </el-row>
+          <el-row style="padding: 10px 0;">
+            <el-col :span="6" style="padding-top: 6px;">质保期</el-col>
+            <el-col :span="6"><el-input v-model="zbq.sjbl" size="mini" style="width: 85%;"></el-input></el-col>
+            <el-col :span="6" style="text-align:center;padding-top: 6px;">{{zbq.yfje}}</el-col>
+            <el-col :span="6"><el-input v-model="zbq.fnote" size="mini" style="width: 85%;"></el-input></el-col>
+          </el-row>
+          <el-row style="padding: 10px 0;">
+            <el-col :span="6">合计</el-col>
+            <el-col :span="6"><el-input style="opacity:0;"></el-input></el-col>
+            <el-col :span="6" style="text-align:center;padding-top: 6px;">{{(Number(jch.yfje) + Number(ybys.yfje) + Number(jgys.yfje) + Number(zbq.yfje)).toFixed(2)}}</el-col>
+            <el-col :span="6"></el-col>
+          </el-row>
+        </el-col>
+        <!-- 材料付费 -->
+        <el-col :span="12" class="TextAlignC" style="border-left: 1px solid #DCDFE6;">
+          <el-row style="padding-bottom: 10px;border-bottom: 1px solid #DCDFE6;">材料付费</el-row>
+          <el-row style="padding: 10px 0;">
+            <el-col :span="6">摘要</el-col>
+            <el-col :span="6">付款比例(%)</el-col>
+            <el-col :span="6">金额</el-col>
+            <el-col :span="6">备注</el-col>
+          </el-row>
+          <el-row style="padding: 10px 0;">
+            <el-col :span="6" style="padding-top: 6px;">竣工验收</el-col>
+            <el-col :span="6"><el-input v-model="jgys2.sjbl" size="mini" style="width: 85%;"></el-input></el-col>
+            <el-col :span="6" style="text-align:center;padding-top: 6px;">{{jgys2.yfje}}</el-col>
+            <el-col :span="6"><el-input v-model="jgys2.fnote" size="mini" style="width: 85%;"></el-input></el-col>
+          </el-row>
+          <el-row style="padding: 10px 0;">
+            <el-col :span="6" style="padding-top: 6px;">材料结算</el-col>
+            <el-col :span="6">--</el-col>
+            <el-col :span="6"><el-input v-model="cljs.yfje" size="mini" style="width: 85%;"></el-input></el-col>
+            <el-col :span="6"><el-input v-model="cljs.fnote" size="mini" style="width: 85%;"></el-input></el-col>
+          </el-row>
+          <el-row style="padding: 10px 0;">
+            <el-col :span="24"><el-input size="mini" style="opacity: 0;"></el-input></el-col>
+          </el-row>
+          <el-row style="padding: 10px 0;">
+            <el-col :span="6" style="padding-top: 6px;">差额</el-col>
+            <el-col :span="6"><el-input size="mini" style="opacity: 0;"></el-input></el-col>
+            <el-col :span="6" style="text-align:center;padding-top: 6px;">{{(jgys2.yfje - cljs.yfje).toFixed(2)}}</el-col>
+            <el-col :span="6"></el-col>
+          </el-row>
+          <el-row style="padding: 10px 0;">
+            <el-col :span="6">合计</el-col>
+            <el-col :span="6"><el-input style="opacity:0;"></el-input></el-col>
+            <el-col :span="6" style="text-align:center;padding-top: 6px;">{{(jgys2.yfje - cljs.yfje).toFixed(2)}}</el-col>
+            <el-col :span="6"></el-col>
+          </el-row>
+        </el-col>
+        <el-col :span="24" style="border-top: 1px solid #DCDFE6;border-bottom: 1px solid #DCDFE6;">
+          <el-row style="padding: 10px 0;">
+            <el-col :span="3" class="TextAlignC">总计</el-col>
+            <el-col :span="21" style="text-align:center;">{{(Number(jch.yfje) + Number(ybys.yfje) + Number(jgys.yfje) + Number(zbq.yfje) + Number(jgys2.yfje) - Number(cljs.yfje)).toFixed(2)}}</el-col>
+          </el-row>
+        </el-col>
+      </el-row>
     </section>
     <section class="MarginT_20 MarginB_20">
       <el-button type="info" size="mini" @click="back">返 回</el-button>
-      <el-button type="danger" size="mini" :loading="btLoading" @click="save">新 增</el-button>
+      <el-button type="danger" size="mini" :loading="btLoading" @click="save">确认新增</el-button>
     </section>
     <!-- 导入Excel -->
     <!-- <el-upload
@@ -307,8 +407,26 @@ export default {
         affiliatedCompany: ''
       },
       rules: {
-        contractDate: [
-          { required: true, message: '请选择合同日期', trigger: 'change' }
+        // contractDate: [
+        //   { required: true, message: '请选择合同日期', trigger: 'change' }
+        // ],
+        contractName: [
+          { required: true, message: '请输入合同名称', trigger: 'change' }
+        ],
+        constructionTeam: [
+          { required: true, message: '请选择施工队', trigger: 'change' }
+        ],
+        department: [
+          { required: true, message: '请选择部门', trigger: 'change' }
+        ],
+        salesman: [
+          { required: true, message: '请选择业务员', trigger: 'change' }
+        ],
+        projectCode: [
+          { required: true, message: '请选择项目编号', trigger: 'change' }
+        ],
+        affiliatedCompany: [
+          { required: true, message: '请选择所属公司', trigger: 'change' }
         ]
       },
       curFItemID: null, // 当前选择的产品代码项
@@ -323,13 +441,16 @@ export default {
       projectList: [],
       affiliatedCompanyList: [],
       // productionCodeList: [],
-      jch: {sjbl: 0, yfje: 0, sjje: 0, fdate: ''},
-      ybys: {sjbl: 0, yfje: 0, sjje: 0, fdate: ''},
-      jgys: {sjbl: 0, yfje: 0, sjje: 0, fdate: ''},
-      zbq: {sjbl: 0, yfje: 0, sjje: 0, fdate: ''},
-      fkNote: '',
-      azfee: 0, // 安装费
-      psumTotal: 0 // 价税合计总额
+      jch: {sjbl: 0, yfje: '0.00', sjje: '0.00', ftype: '安装付款', fnote: ''},
+      ybys: {sjbl: 0, yfje: '0.00', sjje: '0.00', ftype: '安装付款', fnote: ''},
+      jgys: {sjbl: 0, yfje: '0.00', sjje: '0.00', ftype: '安装付款', fnote: ''},
+      zbq: {sjbl: 0, yfje: '0.00', sjje: '0.00', ftype: '安装付款', fnote: ''},
+      jgys2: {sjbl: 0, yfje: '0.00', sjje: '0.00', ftype: '材料付款', fnote: ''},
+      cljs: {sjbl: 0, yfje: '0.00', sjje: '0.00', ftype: '材料付款', fnote: ''},
+      // fkNote: '',
+      azfee: 0.00, // 安装费
+      clfee: 0.00, // 材料费
+      psumTotal: 0.00 // 价税合计总额
     }
   },
   computed: {
@@ -338,12 +459,16 @@ export default {
   },
   watch: {
     psumTotal: function (newVal) {
-      this.jgys.yfje = (newVal * (this.jgys.sjbl / 100)).toFixed(2)
-      this.zbq.yfje = (newVal * (this.zbq.sjbl / 100)).toFixed(2)
+      this.jgys2.yfje = ((newVal - this.azfee) * (this.jgys2.sjbl / 100)).toFixed(2)
     },
+    // clfee: function (newVal) {
+    //   this.jgys2.yfje = (newVal * (this.jgys2.sjbl / 100)).toFixed(2)
+    // },
     azfee: function (newVal) {
       this.jch.yfje = (newVal * (this.jch.sjbl / 100)).toFixed(2)
       this.ybys.yfje = (newVal * (this.ybys.sjbl / 100)).toFixed(2)
+      this.jgys.yfje = (newVal * (this.jgys.sjbl / 100)).toFixed(2)
+      this.zbq.yfje = (newVal * (this.zbq.sjbl / 100)).toFixed(2)
     },
     'jch.sjbl': function (newVal) {
       this.jch.yfje = (this.azfee * (newVal / 100)).toFixed(2)
@@ -352,15 +477,19 @@ export default {
       this.ybys.yfje = (this.azfee * (newVal / 100)).toFixed(2)
     },
     'jgys.sjbl': function (newVal) {
-      this.jgys.yfje = (this.psumTotal * (newVal / 100)).toFixed(2)
+      this.jgys.yfje = (this.azfee * (newVal / 100)).toFixed(2)
     },
     'zbq.sjbl': function (newVal) {
-      this.zbq.yfje = (this.psumTotal * (newVal / 100)).toFixed(2)
+      this.zbq.yfje = (this.azfee * (newVal / 100)).toFixed(2)
+    },
+    'jgys2.sjbl': function (newVal) {
+      this.jgys2.yfje = ((this.psumTotal - this.azfee) * (newVal / 100)).toFixed(2)
     }
   },
   created () {
     this.formContract.contractDate = formatToString(new Date(), 'Simple', '-')
     this.getAffiliatedCompany()
+    this.getConstructionTeam()
   },
   methods: {
     ...mapActions([
@@ -391,19 +520,28 @@ export default {
       this.updateFee()
     },
     updateFee () {
-      let hasZA = false
-      let sum = 0
+      this.azfee = 0.00
+      let hasAZ = false
+      // let hasCL = false
+      let sum = 0.00
       this.formAdd.list.map((item, idx) => {
         sum += item.psum
         if (item.fnumber === '99.02.006' && item.fitemid === 3022) {
-          hasZA = true
-          this.azfee = item.psum
+          hasAZ = true
+          this.azfee = this.azfee + item.psum
         }
+        // if (item.fnumber === '99.02.034' && item.fitemid === 7273) {
+        //   hasCL = true
+        //   this.clfee = item.psum
+        // }
         if (idx === this.formAdd.list.length - 1) {
           this.psumTotal = sum
-          if (!hasZA) {
-            this.azfee = 0
+          if (!hasAZ) {
+            this.azfee = 0.00
           }
+          // if (!hasCL) {
+          //   this.clfee = 0.00
+          // }
         }
       })
     },
@@ -528,6 +666,32 @@ export default {
         this.projectList = []
       }
     },
+    getConstructionTeam () {
+      var tmpData = '<?xml version="1.0" encoding="utf-8"?>'
+      tmpData += '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> '
+      tmpData += '<soap:Body> '
+      tmpData += '<JA_LIST xmlns="http://tempuri.org/">'
+      tmpData += '<FSQL>select fitemid,fname from t_Item where fitemclassid=3004</FSQL>'
+      tmpData += '</JA_LIST>'
+      tmpData += '</soap:Body>'
+      tmpData += '</soap:Envelope>'
+      this.Http.post('JA_LIST', tmpData
+      ).then(res => {
+        let xml = res.data
+        let parser = new DOMParser()
+        let xmlDoc = parser.parseFromString(xml, 'text/xml')
+        // 提取数据
+        let Result = xmlDoc.getElementsByTagName('JA_LISTResponse')[0].getElementsByTagName('JA_LISTResult')[0]
+        let HtmlStr = $(Result).html()
+        this.constructionTeamList = JSON.parse(HtmlStr)
+      }).catch((error) => {
+        this.$message({
+          message: '接口报错!',
+          type: 'error'
+        })
+        console.log(error)
+      })
+    },
     getAffiliatedCompany () {
       var tmpData = '<?xml version="1.0" encoding="utf-8"?>'
       tmpData += '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> '
@@ -597,38 +761,46 @@ export default {
       this.formAdd.list[idx].fname = resultItem.fname
       this.formAdd.list[idx].fmodel = resultItem.fmodel
       this.formAdd.list[idx].funit = resultItem.funit
+      this.updateFee()
     },
     // 合计
     getSummaries (param) {
       const { columns, data } = param
       const sums = []
-      columns.forEach((column, index) => {
-        if (index === 0) {
-          sums[index] = '合计'
-          return
-        }
-        if (index === 4 || index === 6) {
-          sums[index] = data.reduce((prev, curr) => {
-            const Pamount = Number(curr.pamount)
-            const Psum = Number(curr.psum)
-            if (index === 4) {
-              if (!isNaN(Pamount)) {
-                return prev + Pamount
+      if (columns.length > 0) {
+        columns.forEach((column, index) => {
+          if (index === 0) {
+            sums[index] = '合计'
+            return
+          }
+          if (index === 4 || index === 6) {
+            let Sum = data.reduce((prev, curr) => {
+              const Pamount = curr.pamount
+              const Psum = curr.psum
+              const Prev = prev
+              if (index === 4) {
+                if (!isNaN(Pamount)) {
+                  // console.log(Prev, Pamount)
+                  return Number(Prev) + Number((Pamount === '' ? 0 : Pamount))
+                } else {
+                  return Prev
+                }
               } else {
-                return prev
+                if (!isNaN(Psum)) {
+                  return Number(Prev) + Number((Psum === '' ? 0 : Psum))
+                } else {
+                  return Number(Prev)
+                }
               }
-            } else {
-              if (!isNaN(Psum)) {
-                return prev + Psum
-              } else {
-                return prev
-              }
-            }
-          }, 0)
-        } else {
-          sums[index] = ''
-        }
-      })
+            }, 0)
+            // console.log('Number(Sum)', Number(Sum))
+            // debugger
+            sums[index] = (Number(Sum)).toFixed(2)
+          } else {
+            sums[index] = ''
+          }
+        })
+      }
       return sums
     },
     save () {
@@ -677,33 +849,50 @@ export default {
           'fper': this.jch.sjbl + '%',
           'fname': '进场后',
           'famount': this.jch.yfje,
-          'fdecimal': this.jch.sjje,
-          'fdate': this.jch.fdate,
-          'fnote': this.fkNote
+          'fnote': this.jch.fnote,
+          'ftype': '安装付款'
         },
         {
           'fper': this.ybys.sjbl + '%',
           'fname': '隐蔽验收',
           'famount': this.ybys.yfje,
-          'fdecimal': this.ybys.sjje,
-          'fdate': this.ybys.fdate,
-          'fnote': this.fkNote
+          'fnote': this.ybys.fnote,
+          'ftype': '安装付款'
         },
         {
           'fper': this.jgys.sjbl + '%',
           'fname': '竣工验收',
           'famount': this.jgys.yfje,
-          'fdecimal': this.jgys.sjje,
-          'fdate': this.jgys.fdate,
-          'fnote': this.fkNote
+          'fnote': this.jgys.fnote,
+          'ftype': '安装付款'
         },
         {
           'fper': this.zbq.sjbl + '%',
           'fname': '质保期',
           'famount': this.zbq.yfje,
-          'fdecimal': this.zbq.sjje,
-          'fdate': this.zbq.fdate,
-          'fnote': this.fkNote
+          'fnote': this.zbq.fnote,
+          'ftype': '安装付款'
+        },
+        {
+          'fper': this.jgys2.sjbl + '%',
+          'fname': '竣工验收',
+          'famount': this.jgys2.yfje,
+          'fnote': this.jgys2.fnote,
+          'ftype': '材料付款'
+        },
+        {
+          'fper': '0%',
+          'fname': '材料结算',
+          'famount': this.cljs.yfje,
+          'fnote': this.cljs.fnote,
+          'ftype': '材料付款'
+        },
+        {
+          'fper': '0%',
+          'fname': '差额',
+          'famount': (Number(this.jgys2.yfje) - Number(this.cljs.yfje)).toFixed(2),
+          'fnote': '',
+          'ftype': '材料付款'
         }
       ]}
       var tmpData = '<?xml version="1.0" encoding="utf-8"?>'

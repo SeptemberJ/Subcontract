@@ -11,7 +11,10 @@ const vuexLocal = new VuexPersistence({
 const state = {
   useName: 'liubai',
   userInfo: null,
-  contractId: null
+  contractId: null,
+  filterProjectCode: '',
+  filterConstructionTeam: '',
+  filterCompanyName: ''
 }
 
 const actions = {

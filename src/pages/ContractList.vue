@@ -1,18 +1,33 @@
 <template>
   <div class="ContractList">
-    <el-row style="margin: 20px 0 10px 0;">
-      <el-col :span="6" :offset="8">
+    <el-row style="margin: 20px 0 0 0;">
+      <el-form :inline="true" class="demo-form-inline">
+        <el-form-item label="项目编号" size="mini">
+          <el-input v-model="filterProjectCode" size="mini" placeholder="请输入项目编号" clearable></el-input>
+        </el-form-item>
+        <el-form-item label="施工队" size="mini">
+          <el-input v-model="filterConstructionTeam" size="mini" placeholder="请输入施工队" clearable></el-input>
+        </el-form-item>
+        <el-form-item label="公司名称" size="mini">
+          <el-input v-model="filterCompanyName" size="mini" placeholder="请输入公司名称" clearable></el-input>
+        </el-form-item>
+        <el-form-item label="" size="mini">
+          <el-button type="primary" size="mini" icon="el-icon-search" @click="getData">搜 索</el-button>
+        </el-form-item>
+      </el-form>
+      <!-- <el-col :span="6" :offset="8">
         <el-input v-model="projectCode" size="mini" clearable placeholder="请输入要查询的项目编号"></el-input>
       </el-col>
       <el-col :span="3">
         <el-button type="primary" size="mini" icon="el-icon-search" @click="getData">搜 索</el-button>
-      </el-col>
+      </el-col> -->
     </el-row>
-    <el-row style="margin: 20px 0;text-align: right;padding-right: 10px;">
+    <el-row style="margin-bottom: 20px;text-align: right;padding-right: 10px;">
       <el-button type="danger" size="mini" icon="el-icon-plus" @click="addContract">新 增</el-button>
     </el-row>
     <el-table
       id="FilterBlock"
+      v-loading="loading"
       :data="tableData"
       :height="tableHieght - 180"
       @row-dblclick="toDetail"
@@ -23,97 +38,98 @@
         width="50">
       </el-table-column>
       <el-table-column
-        prop="合同号"
-        label="合同号"
-        width="120"
-        show-overflow-tooltip>
-      </el-table-column>
-      <el-table-column
-        prop="合同名称"
-        label="合同名称"
-        show-overflow-tooltip>
-      </el-table-column>
-      <el-table-column
         prop="合同日期"
         label="合同日期"
         width="120"
         show-overflow-tooltip>
       </el-table-column>
       <el-table-column
-        prop="项目编号"
-        label="项目编号"
+        prop="合同号"
+        label="合同号"
+        width="120"
         show-overflow-tooltip>
       </el-table-column>
-      <!-- <el-table-column
-        prop="产品代码"
-        label="产品代码"
-        width="150"
-        show-overflow-tooltip>
-      </el-table-column> -->
-      <!-- <el-table-column
-        prop="产品名称"
-        label="产品名称"
-        width="150"
-        show-overflow-tooltip>
-      </el-table-column> -->
-      <!-- <el-table-column
-        prop="含税单价"
-        label="含税单价"
-        width="100"
-        show-overflow-tooltip>
-      </el-table-column> -->
       <el-table-column
-        prop="数量"
-        label="数量"
-        width="100"
+        prop="项目编号"
+        label="项目编号"
+        width="300"
+        show-overflow-tooltip>
+      </el-table-column>
+      <el-table-column
+        prop="施工队"
+        label="施工队"
+        width="120"
+        show-overflow-tooltip>
+      </el-table-column>
+      <el-table-column
+        prop="安装费"
+        label="安装金额"
+        width="120"
+        show-overflow-tooltip>
+      </el-table-column>
+      <el-table-column
+        prop="材料费"
+        label="材料金额"
+        width="120"
         show-overflow-tooltip>
       </el-table-column>
       <el-table-column
         prop="价税合计"
-        label="价税合计"
+        label="合计"
         width="100"
         show-overflow-tooltip>
       </el-table-column>
-      <!-- <el-table-column
-        prop="单位"
-        label="单位"
-        width="80"
+      <el-table-column
+        prop="已付金额"
+        label="已付金额"
+        width="120"
         show-overflow-tooltip>
-      </el-table-column> -->
-      <!-- <el-table-column
-        prop="规格型号"
-        label="规格型号"
-        width="150"
+      </el-table-column>
+      <el-table-column
+        prop="剩余未付"
+        label="剩余未付"
+        width="120"
         show-overflow-tooltip>
-      </el-table-column> -->
-      <!-- <el-table-column
-        prop="备注"
-        label="备注"
-        width="150"
+      </el-table-column>
+      <el-table-column
+        prop="合同名称"
+        label="合同名称"
+        width="250"
         show-overflow-tooltip>
-      </el-table-column> -->
+      </el-table-column>
+      <el-table-column
+        prop="所属公司"
+        label="所属公司"
+        width="120"
+        show-overflow-tooltip>
+      </el-table-column>
+      <el-table-column
+        prop="部门"
+        label="部门"
+        width="120"
+        show-overflow-tooltip>
+      </el-table-column>
       <el-table-column
         prop="业务员"
         label="业务员"
         width="120"
         show-overflow-tooltip>
       </el-table-column>
-      <el-table-column
-        prop="施工队"
-        label="施工队"
+      <!-- <el-table-column
+        prop="公司名称"
+        label="公司名称"
+        width="150"
         show-overflow-tooltip>
-      </el-table-column>
-      <el-table-column
-        prop="部门"
-        label="部门"
-        show-overflow-tooltip>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         fixed="right"
         label="操作"
-        width="80">
+        width="180">
         <template slot-scope="scope">
-          <el-button type="danger" size="mini" @click="del(scope.row.FInterID)">删 除</el-button>
+          <!-- <el-button type="danger" size="mini" v-if="scope.row['合同号'] != '合计'" @click="del(scope.row.FInterID)">删 除</el-button> -->
+          <el-button v-if="scope.row['审核状态'] == '未审核' && scope.row['合同号'] != '合计'" type="primary" size="mini" @click="examine(scope.row.FInterID, '审核')">审 核</el-button>
+          <el-button v-if="scope.row['审核状态'] == '未审核' && scope.row['合同号'] != '合计'" type="danger" size="mini" @click="del(scope.row.FInterID)">删 除</el-button>
+          <el-button v-if="scope.row['审核状态'] == '已审核' && scope.row['合同号'] != '合计'" type="warning" size="mini" @click="examine(scope.row.FInterID, '反审核')">反审核</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -134,8 +150,8 @@ export default {
   name: 'ContractList',
   data () {
     return {
+      loading: false,
       tableHieght: 0,
-      projectCode: '',
       tableData: [],
       curPage: 1,
       pageSize: 20,
@@ -145,6 +161,30 @@ export default {
   computed: {
     // ...mapState({
     // })
+    filterProjectCode: {
+      get: function () {
+        return this.$store.state.filterProjectCode
+      },
+      set: function (newValue) {
+        this.$store.state.filterProjectCode = newValue
+      }
+    },
+    filterConstructionTeam: {
+      get: function () {
+        return this.$store.state.filterConstructionTeam
+      },
+      set: function (newValue) {
+        this.$store.state.filterConstructionTeam = newValue
+      }
+    },
+    filterCompanyName: {
+      get: function () {
+        return this.$store.state.filterCompanyName
+      },
+      set: function (newValue) {
+        this.$store.state.filterCompanyName = newValue
+      }
+    }
   },
   created () {
     setTimeout(() => {
@@ -207,12 +247,56 @@ export default {
       }).catch(() => {
       })
     },
+    examine (FInterID, Type) {
+      this.$confirm('确认' + Type + '?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        var tmpData = '<?xml version="1.0" encoding="utf-8"?>'
+        tmpData += '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> '
+        tmpData += '<soap:Body> '
+        tmpData += '<PayContract_Check xmlns="http://tempuri.org/">'
+        tmpData += '<ID>' + FInterID + '</ID>'
+        tmpData += '<Type>' + Type + '</Type>'
+        tmpData += '</PayContract_Check>'
+        tmpData += '</soap:Body>'
+        tmpData += '</soap:Envelope>'
+
+        this.Http.post('PayContract_Check', tmpData
+        ).then(res => {
+          let xml = res.data
+          let parser = new DOMParser()
+          let xmlDoc = parser.parseFromString(xml, 'text/xml')
+          // 提取数据
+          let Result = xmlDoc.getElementsByTagName('PayContract_CheckResponse')[0].getElementsByTagName('PayContract_CheckResult')[0]
+          let HtmlStr = $(Result).html()
+          let Info = (JSON.parse(HtmlStr))[0]
+          if (Info.code === '1') {
+            this.$message({
+              message: Type + '成功!',
+              type: 'success'
+            })
+            this.getData()
+          } else {
+            this.$message({
+              message: Type + '失败!',
+              type: 'error'
+            })
+          }
+        }).catch((error) => {
+          console.log(error)
+        })
+      }).catch(() => {
+      })
+    },
     getData () {
+      this.loading = true
       var tmpData = '<?xml version="1.0" encoding="utf-8"?>'
       tmpData += '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> '
       tmpData += '<soap:Body> '
       tmpData += '<JA_LIST xmlns="http://tempuri.org/">'
-      tmpData += "<FSQL><![CDATA[exec [Z_PAYList]  '" + this.projectCode + "'," + Number((this.curPage - 1) * this.pageSize + 1) + ',' + this.curPage * this.pageSize + ']]></FSQL>'
+      tmpData += "<FSQL><![CDATA[exec [Z_PAYList] '" + this.filterProjectCode + "','" + this.filterConstructionTeam + "','" + this.filterCompanyName + "'," + Number((this.curPage - 1) * this.pageSize + 1) + ',' + this.curPage * this.pageSize + ']]></FSQL>'
       tmpData += '</JA_LIST>'
       tmpData += '</soap:Body>'
       tmpData += '</soap:Envelope>'
@@ -233,12 +317,15 @@ export default {
             return item
           })
           this.sum = Info[0].fcount
+          this.loading = false
         } else {
           this.tableData = []
           this.sum = []
+          this.loading = false
         }
       }).catch((error) => {
         console.log(error)
+        this.loading = false
       })
     }
   }

@@ -20,12 +20,18 @@ const state = {
 const actions = {
   updateContractId ({commit, state}, ContractId) {
     commit('setContractId', ContractId)
+  },
+  updateUserInfo ({commit, state}, UserInfo) {
+    commit('setUserInfo', UserInfo)
   }
 }
 
 const mutations = {
   setContractId (state, ContractId) {
     state.contractId = ContractId
+  },
+  setUserInfo (state, UserInfo) {
+    state.userInfo = UserInfo
   }
 }
 

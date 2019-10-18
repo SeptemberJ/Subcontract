@@ -23,6 +23,7 @@
       </el-col> -->
     </el-row>
     <el-row style="margin-bottom: 20px;text-align: right;padding-right: 10px;">
+      <el-button type="success" size="mini" icon="el-icon-printer" @click="exportExcel">导 出</el-button>
       <el-button type="danger" size="mini" icon="el-icon-plus" @click="addContract">新 增</el-button>
     </el-row>
     <el-table
@@ -68,8 +69,14 @@
         show-overflow-tooltip>
       </el-table-column>
       <el-table-column
-        prop="材料费"
+        prop="材料金额"
         label="材料金额"
+        width="120"
+        show-overflow-tooltip>
+      </el-table-column>
+      <el-table-column
+        prop="材料结算"
+        label="材料结算"
         width="120"
         show-overflow-tooltip>
       </el-table-column>
@@ -86,11 +93,23 @@
         show-overflow-tooltip>
       </el-table-column>
       <el-table-column
+        prop="剩余应付"
+        label="剩余应付"
+        width="120"
+        show-overflow-tooltip>
+      </el-table-column>
+      <el-table-column
+        prop="已付比例"
+        label="已付比例"
+        width="120"
+        show-overflow-tooltip>
+      </el-table-column>
+      <!-- <el-table-column
         prop="剩余未付"
         label="剩余未付"
         width="120"
         show-overflow-tooltip>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         prop="合同名称"
         label="合同名称"
@@ -144,7 +163,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import $ from 'jquery'
 export default {
   name: 'ContractList',
@@ -153,14 +172,16 @@ export default {
       loading: false,
       tableHieght: 0,
       tableData: [],
+      tableDataAll: [],
       curPage: 1,
       pageSize: 20,
       sum: 0
     }
   },
   computed: {
-    // ...mapState({
-    // })
+    ...mapState({
+      userInfo: state => state.userInfo
+    }),
     filterProjectCode: {
       get: function () {
         return this.$store.state.filterProjectCode
@@ -290,13 +311,52 @@ export default {
       }).catch(() => {
       })
     },
+    async exportExcel () {
+      let dataAll = await this.getListAll()
+      require.ensure([], () => {
+        const { exportJsonToExcel } = require('../vendor/Export2Excel.js')
+        const tHeader = ['合同日期', '合同号', '项目编号', '施工队', '安装金额', '材料金额', '材料结算', '合计', '已付金额', '剩余应付', '已付比例', '合同名称', '所属公司', '部门', '业务员']
+        const filterVal = ['合同日期', '合同号', '项目编号', '施工队', '安装金额', '材料金额', '材料结算', '合计', '已付金额', '剩余应付', '已付比例', '合同名称', '所属公司', '部门', '业务员']
+        const data = this.formatJson(filterVal, dataAll)
+        exportJsonToExcel(tHeader, data, '分包合同')
+      })
+    },
+    formatJson (filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => v[j]))
+    },
+    getListAll () {
+      return new Promise((resolve, reject) => {
+        var tmpData = '<?xml version="1.0" encoding="utf-8"?>'
+        tmpData += '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> '
+        tmpData += '<soap:Body> '
+        tmpData += '<JA_LIST xmlns="http://tempuri.org/">'
+        tmpData += "<FSQL><![CDATA[exec [Z_PAYReport] '" + this.filterProjectCode + "','" + this.filterConstructionTeam + "','" + this.filterCompanyName + "'," + this.userInfo.fempid + ']]></FSQL>'
+        tmpData += '</JA_LIST>'
+        tmpData += '</soap:Body>'
+        tmpData += '</soap:Envelope>'
+
+        this.Http.post('JA_LIST', tmpData
+        ).then(res => {
+          let xml = res.data
+          let parser = new DOMParser()
+          let xmlDoc = parser.parseFromString(xml, 'text/xml')
+          // 提取数据
+          let Result = xmlDoc.getElementsByTagName('JA_LISTResponse')[0].getElementsByTagName('JA_LISTResult')[0]
+          let HtmlStr = $(Result).html()
+          let Info = JSON.parse(HtmlStr)
+          resolve(Info)
+        }).catch((error) => {
+          console.log(error)
+        })
+      })
+    },
     getData () {
       this.loading = true
       var tmpData = '<?xml version="1.0" encoding="utf-8"?>'
       tmpData += '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> '
       tmpData += '<soap:Body> '
       tmpData += '<JA_LIST xmlns="http://tempuri.org/">'
-      tmpData += "<FSQL><![CDATA[exec [Z_PAYList] '" + this.filterProjectCode + "','" + this.filterConstructionTeam + "','" + this.filterCompanyName + "'," + Number((this.curPage - 1) * this.pageSize + 1) + ',' + this.curPage * this.pageSize + ']]></FSQL>'
+      tmpData += "<FSQL><![CDATA[exec [Z_PAYList] '" + this.filterProjectCode + "','" + this.filterConstructionTeam + "','" + this.filterCompanyName + "'," + Number((this.curPage - 1) * this.pageSize + 1) + ',' + this.curPage * this.pageSize + ',' + this.userInfo.fempid + ']]></FSQL>'
       tmpData += '</JA_LIST>'
       tmpData += '</soap:Body>'
       tmpData += '</soap:Envelope>'

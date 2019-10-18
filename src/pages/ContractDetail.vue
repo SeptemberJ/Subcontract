@@ -464,6 +464,7 @@
       <el-button type="info" size="mini" @click="back">返 回</el-button>
       <el-button  v-if="formContract.checkStatus == '未审核'" type="danger" size="mini" :loading="btLoading" @click="save">保存修改</el-button>
       <el-button type="primary" size="mini" @click="showSGFY">施工费用</el-button>
+      <el-button type="success" size="mini" @click="exportExcel">材料明细导出</el-button>
     </section>
     <!-- 施工费用 -->
     <el-dialog
@@ -572,7 +573,8 @@ export default {
         '施工合同': {'施工合同': []},
         '付款申请单': {'付款申请单': []}
       },
-      dialogVisibleSGFY: false
+      dialogVisibleSGFY: false,
+      exportData: []
     }
   },
   computed: {
@@ -627,6 +629,19 @@ export default {
     },
     showSGFY () {
       this.dialogVisibleSGFY = true
+    },
+    async exportExcel () {
+      console.log(this.exportData)
+      require.ensure([], () => {
+        const { exportJsonToExcel } = require('../vendor/Export2Excel.js')
+        const tHeader = ['产品名称', '产品代码', '规格型号', '数量', '含税单价', '价税合计', '备注', '单位']
+        const filterVal = ['产品名称', '产品代码', '规格型号', '数量', '含税单价', '价税合计', '备注', '单位']
+        const data = this.formatJson(filterVal, this.exportData)
+        exportJsonToExcel(tHeader, data, '材料明细')
+      })
+    },
+    formatJson (filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => v[j]))
     },
     openUrl (url) {
       window.open(encodeURI(url), '_blank')
@@ -1080,6 +1095,7 @@ export default {
         let HtmlStr = $(Result).html()
         let Info = JSON.parse(HtmlStr)
         console.log('Detail', Info)
+        this.exportData = Info
         if (Info.length > 0) {
           this.formContract = {
             contractDate: Info[0]['合同日期'],

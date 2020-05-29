@@ -14,7 +14,8 @@ const state = {
   contractId: null,
   filterProjectCode: '',
   filterConstructionTeam: '',
-  filterCompanyName: ''
+  filterCompanyName: '',
+  curPage: 1
 }
 
 const actions = {

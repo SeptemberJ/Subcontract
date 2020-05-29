@@ -1,8 +1,5 @@
 <template>
-  <div class="Outlay">
-    <!-- <H1>费 用</H1> -->
-    <!-- <el-button style="float:left;margin: 10px;" type="info" size="small" icon="el-icon-arrow-left" @click="back">返 回</el-button> -->
-    <el-button style="float:right;margin: 10px;" type="primary" size="small" @click="exportExcel">导 出</el-button>
+  <div class="Outlay"><el-button style="float:right;margin: 10px;" type="primary" size="small" @click="exportExcel">导 出</el-button>
     <el-table
       ref="OutlayTable"
       :data="outlayList"

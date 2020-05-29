@@ -494,7 +494,6 @@
 import { mapState } from 'vuex'
 import $ from 'jquery'
 import Fee from '../components/Fee'
-// import {formatToString} from '../util/utils'
 import XLSX from 'xlsx'
 export default {
   name: 'Contract',

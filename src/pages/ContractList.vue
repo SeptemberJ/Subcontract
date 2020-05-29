@@ -173,7 +173,7 @@ export default {
       tableHieght: 0,
       tableData: [],
       tableDataAll: [],
-      curPage: 1,
+      // curPage: 1,
       pageSize: 20,
       sum: 0
     }
@@ -182,6 +182,14 @@ export default {
     ...mapState({
       userInfo: state => state.userInfo
     }),
+    curPage: {
+      get: function () {
+        return this.$store.state.curPage
+      },
+      set: function (newValue) {
+        this.$store.state.curPage = newValue
+      }
+    },
     filterProjectCode: {
       get: function () {
         return this.$store.state.filterProjectCode
